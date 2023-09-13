@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/SergeyCherepiuk/surl/pkg/http/handlers"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -22,12 +21,6 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Renderer = template.Renderer
-
-	// Handlers
-	todoHandler := handlers.NewTodoHandler()
-
-	api := e.Group("/api")
-	api.GET("/todos", todoHandler.Get)
 
 	e.GET("/:page", func(c echo.Context) error {
 		page := strings.TrimPrefix(c.Param("page"), "components/")
