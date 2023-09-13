@@ -3,6 +3,7 @@ package template
 import (
 	"html/template"
 	"io"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,9 +19,15 @@ var (
 )
 
 func init() {
-	Renderer.Templates["greeting.html"] = template.Must(template.ParseFiles(
+	// Pages
+	Renderer.Templates["todo"] = template.Must(template.ParseFiles(
 		"public/views/layout.html",
-		"public/views/greeting.html",
+		"public/views/todo.html",
+	))
+
+	// Components
+	Renderer.Templates["components/todo-list"] = template.Must(template.ParseFiles(
+		"public/views/components/todo-list.html",
 	))
 }
 
@@ -29,8 +36,15 @@ type Template struct {
 }
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	if tmpl, ok := t.Templates[name]; ok {
+	tmpl, ok := t.Templates[name]
+
+	if ok && strings.HasPrefix(name, "components/") {
+		return tmpl.Execute(w, data)
+	}
+
+	if ok {
 		return tmpl.ExecuteTemplate(w, "layout.html", data)
 	}
+
 	return notFoundTmpl.ExecuteTemplate(w, "layout.html", nil)
 }

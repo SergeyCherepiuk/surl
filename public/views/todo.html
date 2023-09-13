@@ -1,0 +1,5 @@
+{{define "title"}}Todos{{end}}
+
+{{define "content"}}
+<div hx-get="/api/todos" hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
+{{end}}

@@ -5,7 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/SergeyCherepiuk/surl/pkg/http/handlers"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -21,13 +23,15 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Renderer = template.Renderer
 
-	e.GET("/:name", func(c echo.Context) error {
-		data := struct{ Name string }{Name: c.Param("name")}
-		return c.Render(http.StatusOK, "greeting.html", data)
-	})
+	// Handlers
+	todoHandler := handlers.NewTodoHandler()
 
-	e.GET("/*", func(c echo.Context) error {
-		return c.Render(http.StatusNotFound, "404.html", nil)
+	api := e.Group("/api")
+	api.GET("/todos", todoHandler.Get)
+
+	e.GET("/:page", func(c echo.Context) error {
+		page := strings.TrimPrefix(c.Param("page"), "components/")
+		return c.Render(http.StatusOK, page, nil)
 	})
 
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
