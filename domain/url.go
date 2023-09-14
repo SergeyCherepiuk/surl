@@ -1,6 +1,9 @@
 package domain
 
-import "hash"
+import (
+	"context"
+	"hash"
+)
 
 type Url struct {
 	Username string      `json:"username" db:"username"`
@@ -9,9 +12,9 @@ type Url struct {
 }
 
 type UrlService interface {
-	GetAll(username string) ([]Url, error)
-	GetOrigin(username, hash string) (string, error)
-	Create(username, origin string) (Url, error)
-	Update(username, hash, newOrigin string) (Url, error)
-	Delete(username, hash string) (Url, error)
+	GetAll(ctx context.Context, username string) ([]Url, error)
+	GetOrigin(ctx context.Context, username, hash string) (string, error)
+	Create(ctx context.Context, username, origin string) error
+	Update(ctx context.Context, username, hash, newOrigin string) error
+	Delete(ctx context.Context, username, hash string) error
 }
