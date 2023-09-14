@@ -10,7 +10,7 @@ import (
 
 var db *sqlx.DB
 
-func init() {
+func MustConnect() {
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s",
 		os.Getenv("POSTGRES_USER"),

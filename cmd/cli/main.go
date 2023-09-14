@@ -7,17 +7,21 @@ import (
 	"os"
 	"strings"
 
+	"github.com/SergeyCherepiuk/surl/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func main() {
+func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Panic(err)
 	}
+	postgres.MustConnect()
+}
 
+func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Renderer = template.Renderer
