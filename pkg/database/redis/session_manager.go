@@ -30,18 +30,8 @@ func (s sessionManagerService) Create(ctx context.Context, username string, ttl 
 	return id, err
 }
 
-func (s sessionManagerService) Check(ctx context.Context, username string) (uuid.UUID, error) {
-	value, err := db.Get(ctx, username).Result()
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	id, err := uuid.Parse(value)
-	if err != nil {
-		return uuid.Nil, err
-	}
-
-	return id, nil
+func (s sessionManagerService) Check(ctx context.Context, id uuid.UUID) error {
+	return db.Get(ctx, id.String()).Err()
 }
 
 func (s sessionManagerService) Invalidate(ctx context.Context, username string) error {

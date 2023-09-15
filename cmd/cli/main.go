@@ -10,10 +10,11 @@ import (
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/surl/pkg/database/redis"
 	"github.com/SergeyCherepiuk/surl/pkg/http/handlers"
+	"github.com/SergeyCherepiuk/surl/pkg/http/middleware"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
 
 func init() {
@@ -26,12 +27,15 @@ func init() {
 
 func main() {
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.Use(echomiddleware.Logger())
 	e.Renderer = template.Renderer
 
+	accountManagerService := postgres.NewAccountManagerService()
+	sessionManagerService := redis.NewSessionManagerService()
+
 	userHandler := handlers.UserHandler{
-		AccountManagerService: postgres.NewAccountManagerService(),
-		SessionManagerService: redis.NewSessionManagerService(),
+		AccountManagerService: accountManagerService,
+		SessionManagerService: sessionManagerService,
 	}
 
 	api := e.Group("/api")
@@ -42,7 +46,9 @@ func main() {
 		return c.Render(http.StatusOK, page, nil)
 	})
 
-	e.GET("/", func(c echo.Context) error {
+	authProtected := e.Group("")
+	authProtected.Use(middleware.NewAuthMiddleware(sessionManagerService).Check)
+	authProtected.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "home", nil)
 	})
 

@@ -40,15 +40,16 @@ func (h UserHandler) SingUp(c echo.Context) error {
 	id, err := h.SessionManagerService.Create(context.Background(), user.Username, ttl)
 	if err != nil {
 		c.Response().Header().Set("HX-Redirect", "/login")
-		return c.NoContent(http.StatusSeeOther)
+		return c.NoContent(http.StatusMovedPermanently)
 	}
 
 	c.SetCookie(&http.Cookie{
 		Name:     "session_id",
 		Value:    id.String(),
+		Path:     "/",
 		HttpOnly: true,
 		Expires:  time.Now().Add(ttl),
 	})
 	c.Response().Header().Set("HX-Redirect", "/")
-	return c.NoContent(http.StatusSeeOther)
+	return c.NoContent(http.StatusMovedPermanently)
 }
