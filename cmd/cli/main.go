@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/surl/pkg/database/redis"
@@ -39,11 +38,14 @@ func main() {
 	}
 
 	api := e.Group("/api")
+	api.POST("/auth/login", userHandler.Login)
 	api.POST("/auth/signup", userHandler.SingUp)
 
-	e.GET("/:page", func(c echo.Context) error {
-		page := strings.TrimPrefix(c.Param("page"), "components/")
-		return c.Render(http.StatusOK, page, nil)
+	e.GET("/login", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "login", nil)
+	})
+	e.GET("/signup", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "signup", nil)
 	})
 
 	authProtected := e.Group("")

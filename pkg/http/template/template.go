@@ -24,6 +24,10 @@ func init() {
 	))
 
 	// Authentication
+	Renderer.Templates["login"] = template.Must(template.ParseFiles(
+		"public/views/layout.html",
+		"public/views/auth/login.html",
+	))
 	Renderer.Templates["signup"] = template.Must(template.ParseFiles(
 		"public/views/layout.html",
 		"public/views/auth/signup.html",
