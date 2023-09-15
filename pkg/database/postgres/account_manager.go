@@ -8,18 +8,20 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var AccountManagerService = accountManagerService{
-	getStmt: internal.MustPrepare(db, `SELECT * FROM users WHERE username = :username`),
-	createStmt: internal.MustPrepare(db, `INSERT INTO users VALUES (:username, :password)`),
-	updateStmt: internal.MustPrepare(db, `UPDATE users SET username = :new_username, password = :new_password WHERE username = :username`),
-	deleteStmt: internal.MustPrepare(db, `DELETE FROM users WHERE username = :username`),
+type accountManagerService struct {
+	getStmt    *sqlx.NamedStmt
+	createStmt *sqlx.NamedStmt
+	updateStmt *sqlx.NamedStmt
+	deleteStmt *sqlx.NamedStmt
 }
 
-type accountManagerService struct{
-	getStmt *sqlx.NamedStmt	
-	createStmt *sqlx.NamedStmt	
-	updateStmt *sqlx.NamedStmt	
-	deleteStmt *sqlx.NamedStmt	
+func NewAccountManagerService() *accountManagerService {
+	return &accountManagerService{
+		getStmt:    internal.MustPrepare(db, `SELECT * FROM users WHERE username = :username`),
+		createStmt: internal.MustPrepare(db, `INSERT INTO users VALUES (:username, :password)`),
+		updateStmt: internal.MustPrepare(db, `UPDATE users SET username = :new_username, password = :new_password WHERE username = :username`),
+		deleteStmt: internal.MustPrepare(db, `DELETE FROM users WHERE username = :username`),
+	}
 }
 
 func (s accountManagerService) Get(ctx context.Context, username string) (domain.User, error) {
@@ -56,7 +58,7 @@ func (s accountManagerService) Update(ctx context.Context, username string, upda
 	params := map[string]any{
 		"new_username": newUsername,
 		"new_password": newPassword,
-		"username": username,
+		"username":     username,
 	}
 	_, err = s.updateStmt.ExecContext(ctx, params)
 	return err
