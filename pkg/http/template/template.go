@@ -18,7 +18,21 @@ var (
 )
 
 func init() {
-	// Register pages and components here
+	Renderer.Templates["home"] = template.Must(template.ParseFiles(
+		"public/views/layout.html",
+		"public/views/home.html",
+	))
+
+	// Authentication
+	Renderer.Templates["signup"] = template.Must(template.ParseFiles(
+		"public/views/layout.html",
+		"public/views/auth/signup.html",
+	))
+
+	// Components
+	Renderer.Templates["component/error"] = template.Must(template.ParseFiles(
+		"public/views/components/error.html",
+	))
 }
 
 type Template struct {

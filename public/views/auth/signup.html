@@ -1,0 +1,17 @@
+{{define "title"}}Sign up{{end}}
+
+{{define "content"}}
+<div id="error"></div>
+<form
+    hx-post="/api/auth/signup"
+    hx-target="#error"
+    hx-swap="outerHTML"
+    class="flex flex-col"
+>
+    <label for="username">Username (will be visible in the url):</label>
+    <input name="username" type="text" />
+    <label for="password">Password:</label>
+    <input name="password" type="password" />
+    <button type="submit">Sign up</button>
+</form>
+{{end}}

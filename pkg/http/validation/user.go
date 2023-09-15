@@ -7,14 +7,15 @@ import (
 	"github.com/SergeyCherepiuk/surl/domain"
 )
 
-var usernameRegexp = regexp.MustCompile("^[[:alnum:]_]{3, 30}$")
-var passwordRegexp = regexp.MustCompile("^[[:alnum:]@$!%*#?&]{8,}$")
+var usernameRegexp = regexp.MustCompile("[[:alnum:]_]{3,30}")
+// TODO: Improve validation to  require uppercase letters and digits
+var passwordRegexp = regexp.MustCompile("[[:alnum:]@$!%*#?&]{8,}")
 
 func ValidateUserSignUp(user domain.User) error {
-	if (!usernameRegexp.MatchString(user.Username)) {
+	if !usernameRegexp.MatchString(user.Username) {
 		return fmt.Errorf("invalid username")
-	} else if (!passwordRegexp.MatchString(user.Password)) {
+	} else if !passwordRegexp.MatchString(user.Password) {
 		return fmt.Errorf("invalid password")
 	}
-	return nil 
+	return nil
 }
