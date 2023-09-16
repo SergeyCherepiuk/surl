@@ -29,10 +29,12 @@ func (m authMiddleware) CheckIfAuthenticated(next echo.HandlerFunc) echo.Handler
 			return c.Redirect(http.StatusMovedPermanently, "/login")
 		}
 
-		if err := m.sessionManagerService.Check(context.Background(), id); err != nil {
+		username, err := m.sessionManagerService.Check(context.Background(), id)
+		if err != nil {
 			return c.Redirect(http.StatusMovedPermanently, "/login")
 		}
 
+		c.Set("username", username)
 		return next(c)
 	}
 }
@@ -49,10 +51,12 @@ func (m authMiddleware) CheckIfNotAuthenticated(next echo.HandlerFunc) echo.Hand
 			return next(c)
 		}
 
-		if err := m.sessionManagerService.Check(context.Background(), id); err != nil {
+		username, err := m.sessionManagerService.Check(context.Background(), id)
+		if err != nil {
 			return next(c)
 		}
 
+		c.Set("username", username)
 		return c.Redirect(http.StatusMovedPermanently, "/")
 	}
 }

@@ -21,6 +21,15 @@ func (h UserHandler) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
+	if err := validation.ValidateAuthentication(
+		domain.User{
+			Username: c.FormValue("username"),
+			Password: c.FormValue("password"),
+		},
+	); err != nil {
+		return c.Render(http.StatusOK, "component/error", err.Error())
+	}
+
 	user, err := h.AccountManagerService.Get(context.Background(), username)
 	if err != nil {
 		return c.Render(http.StatusOK, "component/error", "No user with this username was found")
@@ -49,7 +58,7 @@ func (h UserHandler) SingUp(c echo.Context) error {
 		Password: c.FormValue("password"),
 	}
 
-	if err := validation.ValidateUserSignUp(user); err != nil {
+	if err := validation.ValidateAuthentication(user); err != nil {
 		return c.Render(http.StatusOK, "component/error", err.Error())
 	}
 
