@@ -17,7 +17,7 @@ func NewAuthMiddleware(sessionManagerService domain.SessionManagerService) *auth
 	return &authMiddleware{sessionManagerService: sessionManagerService}
 }
 
-func (m authMiddleware) Check(next echo.HandlerFunc) echo.HandlerFunc {
+func (m authMiddleware) CheckIfAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cookie, err := c.Cookie("session_id")
 		if err != nil {
@@ -34,5 +34,25 @@ func (m authMiddleware) Check(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		return next(c)
+	}
+}
+
+func (m authMiddleware) CheckIfNotAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cookie, err := c.Cookie("session_id")
+		if err != nil {
+			return next(c)
+		}
+
+		id, err := uuid.Parse(cookie.Value)
+		if err != nil {
+			return next(c)
+		}
+
+		if err := m.sessionManagerService.Check(context.Background(), id); err != nil {
+			return next(c)
+		}
+
+		return c.Redirect(http.StatusMovedPermanently, "/")
 	}
 }

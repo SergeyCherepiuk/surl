@@ -29,28 +29,38 @@ func main() {
 	e.Use(echomiddleware.Logger())
 	e.Renderer = template.Renderer
 
+	// Services
 	accountManagerService := postgres.NewAccountManagerService()
 	sessionManagerService := redis.NewSessionManagerService()
 
+	// Middleware
+	authMiddleware := middleware.NewAuthMiddleware(sessionManagerService)
+
+	// Handlers
 	userHandler := handlers.UserHandler{
 		AccountManagerService: accountManagerService,
 		SessionManagerService: sessionManagerService,
 	}
 
+	// API routes
 	api := e.Group("/api")
+
 	api.POST("/auth/login", userHandler.Login)
 	api.POST("/auth/signup", userHandler.SingUp)
 
-	e.GET("/login", func(c echo.Context) error {
+	// Web pages routes
+	auth := e.Group("")
+	auth.Use(authMiddleware.CheckIfNotAuthenticated)
+	auth.GET("/login", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "login", nil)
 	})
-	e.GET("/signup", func(c echo.Context) error {
+	auth.GET("/signup", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "signup", nil)
 	})
 
-	authProtected := e.Group("")
-	authProtected.Use(middleware.NewAuthMiddleware(sessionManagerService).Check)
-	authProtected.GET("/", func(c echo.Context) error {
+	protected := e.Group("")
+	protected.Use(authMiddleware.CheckIfAuthenticated)
+	protected.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "home", nil)
 	})
 
