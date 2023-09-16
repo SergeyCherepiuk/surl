@@ -14,7 +14,7 @@ type User struct {
 
 type SessionManagerService interface {
 	Create(ctx context.Context, username string, ttl time.Duration) (uuid.UUID, error)
-	Check(ctx context.Context, id uuid.UUID) error
+	Check(ctx context.Context, id uuid.UUID) (string, error)
 	Invalidate(ctx context.Context, username string) error
 }
 
