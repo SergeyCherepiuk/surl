@@ -2,6 +2,13 @@
 
 {{define "content"}}
 <div class="w-full h-full text-center">
-    <span class="text-3xl">Welcome!</span>
+    <span class="text-3xl">Welcome, {{.}}!</span>
+    <form hx-post="/api/urls" hx-target="#error">
+        <span id="error" class="text-red-500"></span>
+        <label for="origin">Origin:</label>
+        <input name="origin" type="text" />
+        <button type="submit">Save</button>
+    </form>
+    <div hx-get="/api/urls" hx-trigger="load once, submit from:form"></div>
 </div>
 {{end}}

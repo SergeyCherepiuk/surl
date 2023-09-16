@@ -1,13 +1,13 @@
 {{define "title"}}Log in{{end}}
 
 {{define "content"}}
-<div id="error"></div>
 <form
     hx-post="/api/auth/login"
     hx-target="#error"
-    hx-swap="outerHTML"
+    hx-swap="innerHTML"
     class="flex flex-col"
 >
+    <span id="error" class="text-red-500"></span>
     <label for="username">Username:</label>
     <input name="username" type="text" />
     <label for="password">Password:</label>

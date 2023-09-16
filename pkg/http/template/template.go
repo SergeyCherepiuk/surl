@@ -34,8 +34,8 @@ func init() {
 	))
 
 	// Components
-	Renderer.Templates["component/error"] = template.Must(template.ParseFiles(
-		"public/views/components/error.html",
+	Renderer.Templates["components/urls-table-content"] = template.Must(template.ParseFiles(
+		"public/views/components/urls-table-content.html",
 	))
 }
 

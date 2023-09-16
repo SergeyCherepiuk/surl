@@ -32,6 +32,7 @@ func main() {
 	// Services
 	accountManagerService := postgres.NewAccountManagerService()
 	sessionManagerService := redis.NewSessionManagerService()
+	urlService := postgres.NewUrlService()
 
 	// Middleware
 	authMiddleware := middleware.NewAuthMiddleware(sessionManagerService)
@@ -41,27 +42,37 @@ func main() {
 		AccountManagerService: accountManagerService,
 		SessionManagerService: sessionManagerService,
 	}
+	urlHandler := handlers.UrlHandler{
+		UrlService: urlService,
+	}
 
 	// API routes
 	api := e.Group("/api")
 
-	api.POST("/auth/login", userHandler.Login)
-	api.POST("/auth/signup", userHandler.SingUp)
+	auth := api.Group("/auth")
+	auth.Use(authMiddleware.CheckIfNotAuthenticated)
+	auth.POST("/login", userHandler.Login)
+	auth.POST("/signup", userHandler.SingUp)
+
+	urls := api.Group("/urls")
+	urls.Use(authMiddleware.CheckIfAuthenticated)
+	urls.GET("", urlHandler.GetAll)
+	urls.POST("", urlHandler.Create)
 
 	// Web pages routes
-	auth := e.Group("")
-	auth.Use(authMiddleware.CheckIfNotAuthenticated)
-	auth.GET("/login", func(c echo.Context) error {
+	authWeb := e.Group("")
+	authWeb.Use(authMiddleware.CheckIfNotAuthenticated)
+	authWeb.GET("/login", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "login", nil)
 	})
-	auth.GET("/signup", func(c echo.Context) error {
+	authWeb.GET("/signup", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "signup", nil)
 	})
 
-	protected := e.Group("")
-	protected.Use(authMiddleware.CheckIfAuthenticated)
-	protected.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "home", nil)
+	protectedWeb := e.Group("")
+	protectedWeb.Use(authMiddleware.CheckIfAuthenticated)
+	protectedWeb.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "home", c.Get("username").(string))
 	})
 
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))

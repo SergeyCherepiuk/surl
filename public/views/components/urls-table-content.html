@@ -1,0 +1,10 @@
+<tr>
+    <th>Origin</th>
+    <th>Shortened</th>
+</tr>
+{{range .}}
+    <tr>
+        <td><a href="{{.Origin}}" target="_blank">{{.Origin}}</a></td>
+        <td><a href="localhost:3000/{{.Username}}/{{.Hash}}" target="_blank">localhost:3000/{{.Username}}/{{.Hash}}</a></td>
+    </tr>
+{{end}}
