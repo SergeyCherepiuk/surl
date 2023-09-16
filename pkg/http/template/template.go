@@ -7,20 +7,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var (
-	Renderer = &Template{
-		Templates: make(map[string]*template.Template),
-	}
-	notFoundTmpl = template.Must(template.ParseFiles(
-		"public/views/layout.html",
-		"public/views/404.html",
-	))
-)
+var Renderer = &Template{
+	Templates: make(map[string]*template.Template),
+}
 
 func init() {
 	Renderer.Templates["home"] = template.Must(template.ParseFiles(
 		"public/views/layout.html",
 		"public/views/home.html",
+	))
+	Renderer.Templates["404"] = template.Must(template.ParseFiles(
+		"public/views/layout.html",
+		"public/views/404.html",
 	))
 
 	// Authentication
@@ -47,5 +45,5 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	if tmpl, ok := t.Templates[name]; ok {
 		return tmpl.Execute(w, data)
 	}
-	return notFoundTmpl.Execute(w, nil)
+	return t.Templates["404"].Execute(w, nil)
 }

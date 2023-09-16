@@ -15,6 +15,15 @@ type UrlHandler struct {
 	UrlService domain.UrlService
 }
 
+func (h UrlHandler) GetOrigin(c echo.Context) error {
+	origin, err := h.UrlService.GetOrigin(context.Background(), c.Param("username"), c.Param("hash"))
+	if err != nil {
+		return c.Render(http.StatusOK, "404", nil)
+	}
+
+	return c.Redirect(http.StatusMovedPermanently, origin)
+}
+
 func (h UrlHandler) GetAll(c echo.Context) error {
 	username := c.Get("username").(string)
 

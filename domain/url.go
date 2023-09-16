@@ -11,8 +11,8 @@ type Url struct {
 }
 
 type UrlService interface {
-	GetAll(ctx context.Context, username string) ([]Url, error)
 	GetOrigin(ctx context.Context, username, hash string) (string, error)
+	GetAll(ctx context.Context, username string) ([]Url, error)
 	Create(ctx context.Context, url Url) error
 	Update(ctx context.Context, username, hash, newOrigin string) error
 	Delete(ctx context.Context, username, hash string) error

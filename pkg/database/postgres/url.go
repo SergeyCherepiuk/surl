@@ -9,8 +9,8 @@ import (
 )
 
 type urlService struct {
-	getAllStmt    *sqlx.NamedStmt
 	getOriginStmt *sqlx.NamedStmt
+	getAllStmt    *sqlx.NamedStmt
 	createStmt    *sqlx.NamedStmt
 	updateStmt    *sqlx.NamedStmt
 	deleteStmt    *sqlx.NamedStmt
@@ -18,19 +18,12 @@ type urlService struct {
 
 func NewUrlService() *urlService {
 	return &urlService{
-		getAllStmt:    internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
 		getOriginStmt: internal.MustPrepare(db, `SELECT origin FROM urls WHERE username = :username AND hash = :hash`),
+		getAllStmt:    internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
 		createStmt:    internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
 		updateStmt:    internal.MustPrepare(db, `UPDATE urls SET origin = :origin WHERE username = :username AND hash = :hash`),
 		deleteStmt:    internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
 	}
-}
-
-func (s urlService) GetAll(ctx context.Context, username string) ([]domain.Url, error) {
-	params := map[string]any{"username": username}
-	urls := []domain.Url{}
-	err := s.getAllStmt.SelectContext(ctx, &urls, params)
-	return urls, err
 }
 
 func (s urlService) GetOrigin(ctx context.Context, username, hash string) (string, error) {
@@ -41,6 +34,13 @@ func (s urlService) GetOrigin(ctx context.Context, username, hash string) (strin
 	origin := ""
 	err := s.getOriginStmt.GetContext(ctx, &origin, params)
 	return origin, err
+}
+
+func (s urlService) GetAll(ctx context.Context, username string) ([]domain.Url, error) {
+	params := map[string]any{"username": username}
+	urls := []domain.Url{}
+	err := s.getAllStmt.SelectContext(ctx, &urls, params)
+	return urls, err
 }
 
 func (s urlService) Create(ctx context.Context, url domain.Url) error {

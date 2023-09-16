@@ -75,5 +75,7 @@ func main() {
 		return c.Render(http.StatusOK, "home", c.Get("username").(string))
 	})
 
+	e.GET("/:username/:hash", urlHandler.GetOrigin)
+
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }
