@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"net/http"
+	"strings"
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
@@ -38,13 +39,12 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 }
 
 func (h UrlHandler) Create(c echo.Context) error {
-	username := c.Get("username").(string)
 	origin := c.FormValue("origin")
-	hash := crc32.ChecksumIEEE([]byte(origin))
+	origin = strings.TrimSuffix(origin, "/")
 
 	url := domain.Url{
-		Username: username,
-		Hash:     fmt.Sprintf("%08x", hash),
+		Username: c.Get("username").(string),
+		Hash:     fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(origin))),
 		Origin:   origin,
 	}
 

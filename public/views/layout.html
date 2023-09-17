@@ -6,8 +6,24 @@
     <title>{{block "title" .}}{{end}}</title>
     <script src="https://unpkg.com/htmx.org@1.9.5"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @font-face {
+            font-family: "Rubik";
+            src: 
+                url("/assets/fonts/rubik/Rubik-Light.ttf") format("truetype"),
+                url("/assets/fonts/rubik/Rubik-Regular.ttf") format("truetype"),
+                url("/assets/fonts/rubik/Rubik-Medium.ttf") format("truetype"),
+                url("/assets/fonts/rubik/Rubik-SemiBold.ttf") format("truetype"),
+                url("/assets/fonts/rubik/Rubik-Bold.ttf") format("truetype");
+        }
+
+        .font-rubik {
+            font-family: "Rubik", sans-serif;
+        }
+    </style>
 </head>
-<body class="flex justify-start items-center h-screen w-screen bg-[#f8fafc]">
+<body class="flex flex-col justify-start items-center h-full w-full font-rubik font-medium bg-[#f8fafc]">
     {{block "content" .}}{{end}}
 </body>
 </html>

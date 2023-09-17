@@ -26,7 +26,7 @@ type Template struct {
 	Templates map[string]*template.Template
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+func (t *Template) Render(w io.Writer, name string, data any, c echo.Context) error {
 	if tmpl, ok := t.Templates[name]; ok {
 		return tmpl.Execute(w, data)
 	}

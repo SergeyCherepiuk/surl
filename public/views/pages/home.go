@@ -7,8 +7,8 @@ import (
 )
 
 type HomePageData struct {
-	Username      string
-	UrlInputData  components.InputWithButtonComponentData
+	Username     string
+	UrlInputData components.InputWithButtonComponentData
 }
 
 func HomePage() *template.Template {

@@ -29,6 +29,7 @@ func init() {
 func main() {
 	e := echo.New()
 	e.Use(echomiddleware.Logger())
+	e.Static("/assets", "public/assets")
 	e.Renderer = template.Renderer
 
 	// Services
@@ -55,7 +56,7 @@ func main() {
 	auth.POST("/login", userHandler.Login)
 	auth.POST("/signup", userHandler.SingUp)
 
-	urls := api.Group("/urls")	
+	urls := api.Group("/urls")
 	urls.Use(authMiddleware.CheckIfAuthenticated) // TODO: Check middleware (redirection might work incorrectly)
 	urls.GET("", urlHandler.GetAll)
 	urls.POST("", urlHandler.Create)
@@ -97,7 +98,7 @@ func main() {
 		data := pages.HomePageData{
 			Username: c.Get("username").(string),
 			UrlInputData: components.InputWithButtonComponentData{
-				Type: "text", Name: "origin", Placeholder: "Your url", Text: "Shorten",
+				Type: "text", Name: "origin", Placeholder: "Your link", Text: "Shorten",
 			},
 		}
 		return c.Render(http.StatusOK, "home", data)

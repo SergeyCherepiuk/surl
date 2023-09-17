@@ -3,7 +3,7 @@
 {{define "content"}}
 <div class="flex flex-col gap-16 w-full h-full items-center">
     <span class="text-3xl pt-8">Welcome, {{.Username}}!</span>
-    <form hx-post="/api/urls" hx-target="#error" class="sm:w-full md:w-[80%] lg:w-[65%] xl:w-1/2">
+    <form hx-post="/api/urls" hx-target="#error" class="w-full md:w-[80%] lg:w-[65%] xl:w-1/2">
         <span id="error" class="text-red-500"></span>
         {{template "input-with-button" .UrlInputData}} 
     </form>
