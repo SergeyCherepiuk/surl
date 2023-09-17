@@ -1,0 +1,17 @@
+{{define "title"}}Log in{{end}}
+
+{{define "content"}}
+<div class="flex items-center justify-center h-full w-full">
+    <form
+        hx-post="/api/auth/login"
+        hx-target="#error"
+        hx-swap="innerHTML"
+        class="flex flex-col gap-8 w-1/4 items-center"
+    >
+        <span id="error" class="text-red-500"></span>
+        {{template "input" .UsernameInputData}}  
+        {{template "input" .PasswordInputData}}
+        {{template "button" .ButtonData}}
+    </form>
+</div>
+{{end}}

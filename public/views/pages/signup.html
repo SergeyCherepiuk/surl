@@ -1,0 +1,15 @@
+{{define "title"}}Sign up{{end}}
+
+{{define "content"}}
+<form
+    hx-post="/api/auth/signup"
+    hx-target="#error"
+    hx-swap="innerHTML"
+    class="flex flex-col"
+>
+    <span id="error" class="text-red-500"></span>
+    {{template "input" .UsernameInputData}}  
+    {{template "input" .PasswordInputData}}
+    {{template "button" .ButtonData}}
+</form>
+{{end}}

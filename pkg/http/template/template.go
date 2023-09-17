@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"io"
 
+	"github.com/SergeyCherepiuk/surl/public/views/components"
+	"github.com/SergeyCherepiuk/surl/public/views/pages"
 	"github.com/labstack/echo/v4"
 )
 
@@ -12,29 +14,12 @@ var Renderer = &Template{
 }
 
 func init() {
-	Renderer.Templates["home"] = template.Must(template.ParseFiles(
-		"public/views/layout.html",
-		"public/views/home.html",
-	))
-	Renderer.Templates["404"] = template.Must(template.ParseFiles(
-		"public/views/layout.html",
-		"public/views/404.html",
-	))
+	Renderer.Templates["home"] = pages.HomePage()
+	Renderer.Templates["not-found"] = pages.NotFoundPage()
+	Renderer.Templates["login"] = pages.LoginPage()
+	Renderer.Templates["signup"] = pages.SignUpPage()
 
-	// Authentication
-	Renderer.Templates["login"] = template.Must(template.ParseFiles(
-		"public/views/layout.html",
-		"public/views/auth/login.html",
-	))
-	Renderer.Templates["signup"] = template.Must(template.ParseFiles(
-		"public/views/layout.html",
-		"public/views/auth/signup.html",
-	))
-
-	// Components
-	Renderer.Templates["components/urls-table-content"] = template.Must(template.ParseFiles(
-		"public/views/components/urls-table-content.html",
-	))
+	Renderer.Templates["components/urls-table"] = components.UrlsTableComponent()
 }
 
 type Template struct {
@@ -45,5 +30,5 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	if tmpl, ok := t.Templates[name]; ok {
 		return tmpl.Execute(w, data)
 	}
-	return t.Templates["404"].Execute(w, nil)
+	return t.Templates["not-found"].Execute(w, nil)
 }
