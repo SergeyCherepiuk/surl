@@ -11,6 +11,8 @@ import (
 	"github.com/SergeyCherepiuk/surl/pkg/http/handlers"
 	"github.com/SergeyCherepiuk/surl/pkg/http/middleware"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
+	"github.com/SergeyCherepiuk/surl/public/views/components"
+	"github.com/SergeyCherepiuk/surl/public/views/pages"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -50,29 +52,55 @@ func main() {
 	api := e.Group("/api")
 
 	auth := api.Group("/auth")
-	auth.Use(authMiddleware.CheckIfNotAuthenticated)
 	auth.POST("/login", userHandler.Login)
 	auth.POST("/signup", userHandler.SingUp)
 
-	urls := api.Group("/urls")
-	urls.Use(authMiddleware.CheckIfAuthenticated)
+	urls := api.Group("/urls")	
+	urls.Use(authMiddleware.CheckIfAuthenticated) // TODO: Check middleware (redirection might work incorrectly)
 	urls.GET("", urlHandler.GetAll)
 	urls.POST("", urlHandler.Create)
 
 	// Web pages routes
 	authWeb := e.Group("")
-	authWeb.Use(authMiddleware.CheckIfNotAuthenticated)
 	authWeb.GET("/login", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "login", nil)
+		data := pages.LoginPageData{
+			UsernameInputData: components.InputComponentData{
+				Type: "text", Name: "username", Placeholder: "Username",
+			},
+			PasswordInputData: components.InputComponentData{
+				Type: "password", Name: "password", Placeholder: "Password",
+			},
+			ButtonData: components.ButtonComponentData{
+				Type: "submit", Text: "Log in",
+			},
+		}
+		return c.Render(http.StatusOK, "login", data)
 	})
 	authWeb.GET("/signup", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "signup", nil)
+		data := pages.SignUpPageData{
+			UsernameInputData: components.InputComponentData{
+				Type: "text", Name: "username", Placeholder: "Username",
+			},
+			PasswordInputData: components.InputComponentData{
+				Type: "password", Name: "password", Placeholder: "Password",
+			},
+			ButtonData: components.ButtonComponentData{
+				Type: "submit", Text: "Sing up",
+			},
+		}
+		return c.Render(http.StatusOK, "signup", data)
 	})
 
 	protectedWeb := e.Group("")
 	protectedWeb.Use(authMiddleware.CheckIfAuthenticated)
 	protectedWeb.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "home", c.Get("username").(string))
+		data := pages.HomePageData{
+			Username: c.Get("username").(string),
+			UrlInputData: components.InputWithButtonComponentData{
+				Type: "text", Name: "origin", Placeholder: "Your url", Text: "Shorten",
+			},
+		}
+		return c.Render(http.StatusOK, "home", data)
 	})
 
 	e.GET("/:username/:hash", urlHandler.GetOrigin)

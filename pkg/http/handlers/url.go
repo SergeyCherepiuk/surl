@@ -8,6 +8,7 @@ import (
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
+	"github.com/SergeyCherepiuk/surl/public/views/components"
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,7 +33,8 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusOK, "Failed too load urls from the database")
 	}
 
-	return c.Render(http.StatusOK, "components/urls-table-content", urls)
+	data := components.UrlsTableComponentData{Urls: urls}
+	return c.Render(http.StatusOK, "components/urls-table", data)
 }
 
 func (h UrlHandler) Create(c echo.Context) error {
