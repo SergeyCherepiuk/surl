@@ -16,13 +16,11 @@
                 </td>
                 <td class="align-top px-4 py-3 w-[25%] text-black">
                     <!-- ISSUE: Responsiveness is broken -->
-                    <!-- ISSUE: Multiple ids with the same value because of the loop -->
-                    <!-- ISSUE: Click listener is not triggered (blocked by div) -->
-                    <div class="flex flex-row gap-3 justify-center">
-                        <a id="link" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank" >
+                    <div class="flex items-center flex-wrap">
+                        <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank">
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
-                        <button onclick="copy()">
+                        <button onclick="copy('{{.Hash}}')">
                             <img src="/assets/images/ic_copy.svg" alt="Copy to clipboard" class="w-6 h-6 rounded-md bg-gray-100 hover:bg-gray-200">
                         </button>
                     </div>
@@ -36,8 +34,8 @@
 </table>
 
 <script>
-    function copy() {
-        var anchor = document.getElementById("link");
+    function copy(id) {
+        var anchor = document.getElementById(id);
         navigator.clipboard.writeText(anchor.href);
     }
 </script>
