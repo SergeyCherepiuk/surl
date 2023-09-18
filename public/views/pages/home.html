@@ -7,6 +7,6 @@
         <span id="error" class="text-red-500"></span>
         {{template "input-with-button" .UrlInputData}} 
     </form>
-    <div hx-get="/api/urls" hx-trigger="load once, submit from:form delay:50ms" class="w-[80%]"></div>
+    <div hx-get="/api/urls" hx-trigger="load once, submit from:form delay:50ms" class="w-full 2xl:w-[90%] overflow-x-auto"></div>
 </div>
 {{end}}

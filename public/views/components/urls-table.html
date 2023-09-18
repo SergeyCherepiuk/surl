@@ -1,31 +1,30 @@
-<table class="table-fixed w-full break-words divide-y">
+<table class="w-full divide-y">
     <thead class="bg-gray-100">
         <tr>
-            <th class="text-start text-sm px-4 py-3 w-[65%] text-gray-500">Origin</th>
-            <th class="text-start text-sm px-4 py-3 w-[25%] text-gray-500">Link</th>
-            <th class="text-start text-sm px-4 py-3 w-[10%] text-gray-500">Action</th>
+            <th class="text-start text-sm px-4 py-3 text-gray-500">Origin</th>
+            <th class="text-start text-sm px-4 py-3 text-gray-500">Link</th>
+            <th class="text-start text-sm px-4 py-3 text-gray-500">Action</th>
         </tr>
     </thead>
     <tbody class="divide-y">
         {{range .Urls}}
             <tr class="hover:bg-gray-100">
-                <td class="align-top px-4 py-3 w-[65%] text-black">
-                    <a href="{{.Origin}}" target="_blank">
+                <td class="align-top px-4 py-3 text-black min-w-[450px]">
+                    <a href="{{.Origin}}" target="_blank" class="break-all">
                         {{trimProtocol .Origin}}
                     </a>
                 </td>
-                <td class="align-top px-4 py-3 w-[25%] text-black">
-                    <!-- ISSUE: Responsiveness is broken -->
-                    <div class="flex items-center flex-wrap">
+                <td class="align-top px-4 py-3 text-black">
+                    <div class="flex flex-row gap-2 justify-between items-center">
                         <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank">
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
-                        <button onclick="copy('{{.Hash}}')">
-                            <img src="/assets/images/ic_copy.svg" alt="Copy to clipboard" class="w-6 h-6 rounded-md bg-gray-100 hover:bg-gray-200">
+                        <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
+                            <img src="/assets/images/ic_copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200">
                         </button>
                     </div>
                 </td>
-                <td class="align-top px-4 py-3 w-[10%] text-blue-500">
+                <td class="align-top px-4 py-3 text-blue-500">
                     <a href="#"><b>Delete</b></a>
                 </td>
             </tr>
@@ -39,3 +38,21 @@
         navigator.clipboard.writeText(anchor.href);
     }
 </script>
+
+<style>
+    ::-webkit-scrollbar {
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #bbbbbb; 
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #999999; 
+    }
+</style>
