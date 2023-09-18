@@ -58,3 +58,14 @@ func (h UrlHandler) Create(c echo.Context) error {
 
 	return c.NoContent(http.StatusOK)
 }
+
+func (h UrlHandler) Delete(c echo.Context) error {
+	username := c.Param("username")
+	hash := c.Param("hash")
+
+	if err := h.UrlService.Delete(context.Background(), username, hash); err != nil {
+		return c.NoContent(http.StatusNoContent)
+	}
+
+	return c.NoContent(http.StatusOK)
+}

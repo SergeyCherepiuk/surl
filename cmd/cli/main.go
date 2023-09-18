@@ -39,6 +39,7 @@ func main() {
 
 	// Middleware
 	authMiddleware := middleware.NewAuthMiddleware(sessionManagerService)
+	urlMiddleware := middleware.NewUrlMiddleware()
 
 	// Handlers
 	userHandler := handlers.UserHandler{
@@ -53,16 +54,19 @@ func main() {
 	api := e.Group("/api")
 
 	auth := api.Group("/auth")
+	// TODO: Add middleware to check if user is not already logged in
 	auth.POST("/login", userHandler.Login)
 	auth.POST("/signup", userHandler.SingUp)
 
 	urls := api.Group("/urls")
-	urls.Use(authMiddleware.CheckIfAuthenticated) // TODO: Check middleware (redirection might work incorrectly)
+	urls.Use(authMiddleware.CheckIfAuthenticated(false)) // TODO: Check middleware (redirection might work incorrectly)
 	urls.GET("", urlHandler.GetAll)
 	urls.POST("", urlHandler.Create)
+	urls.DELETE("/:username/:hash", urlHandler.Delete, urlMiddleware.IsOwner)
 
 	// Web pages routes
 	authWeb := e.Group("")
+	authWeb.Use(authMiddleware.CheckIfNotAuthenticated)
 	authWeb.GET("/login", func(c echo.Context) error {
 		data := pages.LoginPageData{
 			UsernameInputData: components.InputComponentData{
@@ -93,7 +97,7 @@ func main() {
 	})
 
 	protectedWeb := e.Group("")
-	protectedWeb.Use(authMiddleware.CheckIfAuthenticated)
+	protectedWeb.Use(authMiddleware.CheckIfAuthenticated(true))
 	protectedWeb.GET("/", func(c echo.Context) error {
 		data := pages.HomePageData{
 			Username: c.Get("username").(string),

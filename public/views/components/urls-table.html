@@ -1,4 +1,4 @@
-<table class="w-full divide-y">
+<table class="w-full divide-y overflow-y-clip">
     <thead class="bg-gray-100">
         <tr>
             <th class="text-start text-sm px-4 py-3 text-gray-500">Origin</th>
@@ -15,8 +15,8 @@
                     </a>
                 </td>
                 <td class="align-top px-4 py-3 text-black">
-                    <div class="flex flex-row gap-2 justify-between items-center">
-                        <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank">
+                    <div class="flex flex-row gap-2 items-center">
+                        <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank" class="truncate">
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
                         <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
@@ -25,7 +25,9 @@
                     </div>
                 </td>
                 <td class="align-top px-4 py-3 text-blue-500">
-                    <a href="#"><b>Delete</b></a>
+                    <button hx-delete="/api/urls/{{.Username}}/{{.Hash}}" hx-target="closest tr" hx-swap="outerHTML">
+                        <b>Delete</b>
+                    </button>
                 </td>
             </tr>
         {{end}}
