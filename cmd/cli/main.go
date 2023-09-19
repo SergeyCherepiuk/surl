@@ -50,23 +50,31 @@ func main() {
 		UrlService: urlService,
 	}
 
+	// TODO: Move all HTTP routes to http package
+
 	// API routes
 	api := e.Group("/api")
 
 	auth := api.Group("/auth")
-	// TODO: Add middleware to check if user is not already logged in
+	auth.Use(authMiddleware.IsNotAuthenticated(func(c echo.Context) error {
+		return c.NoContent(http.StatusUnauthorized)
+	}))
 	auth.POST("/login", userHandler.Login)
 	auth.POST("/signup", userHandler.SingUp)
 
 	urls := api.Group("/urls")
-	urls.Use(authMiddleware.CheckIfAuthenticated(false)) // TODO: Check middleware (redirection might work incorrectly)
+	urls.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {
+		return c.NoContent(http.StatusUnauthorized)
+	}))
 	urls.GET("", urlHandler.GetAll)
 	urls.POST("", urlHandler.Create)
 	urls.DELETE("/:username/:hash", urlHandler.Delete, urlMiddleware.IsOwner)
 
 	// Web pages routes
 	authWeb := e.Group("")
-	authWeb.Use(authMiddleware.CheckIfNotAuthenticated)
+	authWeb.Use(authMiddleware.IsNotAuthenticated(func(c echo.Context) error {
+		return c.Redirect(http.StatusSeeOther, "/")
+	}))
 	authWeb.GET("/login", func(c echo.Context) error {
 		data := pages.LoginPageData{
 			UsernameInputData: components.InputComponentData{
@@ -97,7 +105,9 @@ func main() {
 	})
 
 	protectedWeb := e.Group("")
-	protectedWeb.Use(authMiddleware.CheckIfAuthenticated(true))
+	protectedWeb.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {
+		return c.Redirect(http.StatusSeeOther, "/login")
+	}))
 	protectedWeb.GET("/", func(c echo.Context) error {
 		data := pages.HomePageData{
 			Username: c.Get("username").(string),
@@ -109,6 +119,10 @@ func main() {
 	})
 
 	e.GET("/:username/:hash", urlHandler.GetOrigin)
+
+	e.GET("/*", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "not-found", nil)
+	})
 
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }

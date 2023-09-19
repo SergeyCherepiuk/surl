@@ -47,7 +47,7 @@ func (h UserHandler) Login(c echo.Context) error {
 
 	h.setCookie(c, id, ttl)
 	c.Response().Header().Set("HX-Redirect", "/")
-	return c.NoContent(http.StatusMovedPermanently)
+	return c.NoContent(http.StatusSeeOther)
 }
 
 func (h UserHandler) SingUp(c echo.Context) error {
@@ -74,12 +74,12 @@ func (h UserHandler) SingUp(c echo.Context) error {
 	id, err := h.SessionManagerService.Create(context.Background(), user.Username, ttl)
 	if err != nil {
 		c.Response().Header().Set("HX-Redirect", "/login")
-		return c.NoContent(http.StatusMovedPermanently)
+		return c.NoContent(http.StatusSeeOther)
 	}
 
 	h.setCookie(c, id, ttl)
 	c.Response().Header().Set("HX-Redirect", "/")
-	return c.NoContent(http.StatusMovedPermanently)
+	return c.NoContent(http.StatusSeeOther)
 }
 
 func (h UserHandler) setCookie(c echo.Context, id uuid.UUID, ttl time.Duration) {
