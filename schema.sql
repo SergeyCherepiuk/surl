@@ -4,7 +4,7 @@ create table users(
 );
 
 create table urls(
-    username varchar(30) references users(username) not null,
+    username varchar(30) not null references users(username) on delete cascade on update cascade,
     hash varchar(8) not null,
     origin text not null,
     primary key(username, hash)
