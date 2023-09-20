@@ -10,7 +10,7 @@ import (
 )
 
 type urlService struct {
-	getOriginStmt    *sqlx.NamedStmt
+	getStmt          *sqlx.NamedStmt
 	getAllStmt       *sqlx.NamedStmt
 	getAllSortedStmt map[string]*sqlx.NamedStmt
 	createStmt       *sqlx.NamedStmt
@@ -20,23 +20,23 @@ type urlService struct {
 
 func NewUrlService() *urlService {
 	return &urlService{
-		getOriginStmt:    internal.MustPrepare(db, `SELECT origin FROM urls WHERE username = :username AND hash = :hash`),
+		getStmt:          internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username AND hash = :hash`),
 		getAllStmt:       internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
-		getAllSortedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
+		getAllSortedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
 		createStmt:       internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
-		updateStmt:       internal.MustPrepare(db, `UPDATE urls SET origin = :origin WHERE username = :username AND hash = :hash`),
+		updateStmt:       internal.MustPrepare(db, `UPDATE urls SET origin = :origin, last_used_at = :last_used_at WHERE username = :username AND hash = :hash`),
 		deleteStmt:       internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
 	}
 }
 
-func (s urlService) GetOrigin(ctx context.Context, username, hash string) (string, error) {
+func (s urlService) Get(ctx context.Context, username, hash string) (domain.Url, error) {
 	params := map[string]any{
 		"username": username,
 		"hash":     hash,
 	}
-	origin := ""
-	err := s.getOriginStmt.GetContext(ctx, &origin, params)
-	return origin, err
+	var url domain.Url
+	err := s.getStmt.GetContext(ctx, &url, params)
+	return url, err
 }
 
 func (s urlService) GetAll(ctx context.Context, username string) ([]domain.Url, error) {
@@ -48,12 +48,12 @@ func (s urlService) GetAll(ctx context.Context, username string) ([]domain.Url, 
 
 func (s urlService) GetAllSorted(ctx context.Context, username, sortBy string) ([]domain.Url, error) {
 	params := map[string]any{"username": username}
-	
+
 	stmt, ok := s.getAllSortedStmt[sortBy]
 	if !ok {
 		return []domain.Url{}, fmt.Errorf("sorting by given attribute is unsupported")
 	}
-	
+
 	urls := []domain.Url{}
 	err := stmt.SelectContext(ctx, &urls, params)
 	return urls, err
@@ -69,11 +69,12 @@ func (s urlService) Create(ctx context.Context, url domain.Url) error {
 	return err
 }
 
-func (s urlService) Update(ctx context.Context, username, hash, newOrigin string) error {
+func (s urlService) Update(ctx context.Context, username, hash string, updates domain.UrlUpdates) error {
 	params := map[string]any{
-		"username": username,
-		"hash":     hash,
-		"origin":   newOrigin,
+		"username":     username,
+		"hash":         hash,
+		"origin":       updates.Origin,
+		"last_used_at": updates.LastUsedAt,
 	}
 	_, err := s.updateStmt.ExecContext(ctx, params)
 	return err

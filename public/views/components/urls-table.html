@@ -1,23 +1,24 @@
 <table class="table-auto w-full divide-y overflow-y-clip" onload="formatDates()">
     <thead class="bg-gray-100">
         <tr>
-            <th hx-get="/api/urls?sortBy=origin" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Origin</th>
-            <th hx-get="/api/urls?sortBy=hash" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Link</th>
-            <th hx-get="/api/urls?sortBy=created_at" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Created at</th>
+            <th hx-get="/api/urls?sortBy=origin" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Origin</th>
+            <th hx-get="/api/urls?sortBy=hash" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Link</th>
+            <th hx-get="/api/urls?sortBy=last_used_at" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Last used at</th>
+            <th hx-get="/api/urls?sortBy=created_at" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Created at</th>
             <th class="text-start text-sm px-4 py-3 text-gray-500">Action</th>
         </tr>
     </thead>
     <tbody class="divide-y">
         {{range .Urls}}
             <tr class="hover:bg-gray-100">
-                <td class="align-top px-4 py-3 text-black min-w-[450px]">
-                    <a href="{{.Origin}}" target="_blank" class="break-all">
+                <td class="align-top px-4 py-3 text-black min-w-[450px] break-all">
+                    <a href="{{.Origin}}" target="_blank">
                         {{formatLink .Origin}}
                     </a>
                 </td>
-                <td class="align-top px-4 py-3 text-black">
+                <td class="align-top px-4 py-3 text-black whitespace-nowrap">
                     <div class="flex flex-row gap-2 items-center">
-                        <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank" class="truncate">
+                        <a id="{{.Hash}}" href="http://localhost:3000/{{.Username}}/{{.Hash}}" target="_blank">
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
                         <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
@@ -26,9 +27,12 @@
                     </div>
                 </td>
                 <td class="align-top px-4 py-3 text-black whitespace-nowrap">
-                    {{formatDate .CreatedAt}}
+                    {{formatDateWithTime .LastUsedAt}}
                 </td>
-                <td class="align-top px-4 py-3 text-blue-500">
+                <td class="align-top px-4 py-3 text-black whitespace-nowrap">
+                    {{formatDate .CreatedAt}}
+                </td> 
+                <td class="align-top px-4 py-3 text-blue-500 whitespace-nowrap">
                     <button hx-delete="/api/urls/{{.Username}}/{{.Hash}}" hx-target="closest tr" hx-swap="outerHTML">
                         <b>Delete</b>
                     </button>

@@ -6,6 +6,7 @@ import (
 	"hash/crc32"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
@@ -18,12 +19,22 @@ type UrlHandler struct {
 }
 
 func (h UrlHandler) GetOrigin(c echo.Context) error {
-	origin, err := h.UrlService.GetOrigin(context.Background(), c.Param("username"), c.Param("hash"))
+	c.Response().Header().Set("Cache-Control", "no-cache, max-age=0")
+
+	username := c.Param("username")
+	hash := c.Param("hash")
+
+	url, err := h.UrlService.Get(context.Background(), username, hash)
 	if err != nil {
 		return c.Render(http.StatusOK, "404", nil)
 	}
 
-	return c.Redirect(http.StatusMovedPermanently, origin)
+	updates := domain.UrlUpdates{
+		Origin:     url.Origin,
+		LastUsedAt: time.Now(),
+	}
+	err = h.UrlService.Update(context.Background(), username, hash, updates)
+	return c.Redirect(http.StatusMovedPermanently, url.Origin)
 }
 
 func (h UrlHandler) GetAll(c echo.Context) error {

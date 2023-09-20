@@ -22,6 +22,12 @@ func UrlsTableComponent() *template.Template {
 		"formatDate": func(date time.Time) string {
 			return date.Format("02 Jan 2006")
 		},
+		"formatDateWithTime": func(date time.Time) string {
+			if date.Unix() == 0 {
+				return "Never"
+			}
+			return date.Format("02 Jan 2006 15:04:05")
+		},
 	}).ParseFiles(
 		"public/views/components/urls-table.html",
 	))
