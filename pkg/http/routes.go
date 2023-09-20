@@ -20,6 +20,7 @@ func NewRouter(
 ) *echo.Echo {
 	e := echo.New()
 	e.Use(echomiddleware.Logger())
+	e.Static("/static", "public/static")
 	e.Static("/assets", "public/assets")
 	e.Renderer = template.Renderer
 
