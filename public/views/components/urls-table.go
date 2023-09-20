@@ -3,6 +3,7 @@ package components
 import (
 	"html/template"
 	"strings"
+	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
 )
@@ -13,10 +14,13 @@ type UrlsTableComponentData struct {
 
 func UrlsTableComponent() *template.Template {
 	return template.Must(template.New("urls-table.html").Funcs(template.FuncMap{
-		"trimProtocol": func(url string) string {
-			trimmed := strings.TrimPrefix(url, "http://")
-			trimmed = strings.TrimPrefix(trimmed, "https://")
-			return trimmed
+		"formatLink": func(link string) string {
+			l := strings.TrimPrefix(link, "http://")
+			l = strings.TrimPrefix(l, "https://")
+			return strings.TrimSuffix(l, "/")
+		},
+		"formatDate": func(date time.Time) string {
+			return date.Format("02 Jan 2006")
 		},
 	}).ParseFiles(
 		"public/views/components/urls-table.html",

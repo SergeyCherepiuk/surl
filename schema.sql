@@ -7,5 +7,6 @@ create table urls(
     username varchar(30) not null references users(username) on delete cascade on update cascade,
     hash varchar(8) not null,
     origin text not null,
+    created_at timestamp default now(),
     primary key(username, hash)
 );

@@ -36,8 +36,6 @@ func NewRouter(
 		UrlService: urlService,
 	}
 
-	// TODO: Move all HTTP routes to http package
-
 	// API routes
 	api := e.Group("/api")
 

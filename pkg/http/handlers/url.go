@@ -28,8 +28,16 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 
 func (h UrlHandler) GetAll(c echo.Context) error {
 	username := c.Get("username").(string)
+	sortBy := c.QueryParam("sortBy")
 
-	urls, err := h.UrlService.GetAll(context.Background(), username)
+	var urls []domain.Url
+	var err error
+	if strings.TrimSpace(sortBy) != "" {
+		urls, err = h.UrlService.GetAllSorted(context.Background(), username, sortBy)
+	} else {
+		urls, err = h.UrlService.GetAll(context.Background(), username)
+	}
+
 	if err != nil {
 		return c.String(http.StatusOK, "Failed too load urls from the database")
 	}

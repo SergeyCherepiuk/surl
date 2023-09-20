@@ -1,8 +1,9 @@
-<table class="w-full divide-y overflow-y-clip">
+<table class="w-full divide-y overflow-y-clip" onload="formatDates()">
     <thead class="bg-gray-100">
         <tr>
-            <th class="text-start text-sm px-4 py-3 text-gray-500">Origin</th>
-            <th class="text-start text-sm px-4 py-3 text-gray-500">Link</th>
+            <th hx-get="/api/urls?sortBy=origin" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Origin</th>
+            <th hx-get="/api/urls?sortBy=hash" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Link</th>
+            <th hx-get="/api/urls?sortBy=created_at" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500">Created at</th> <!-- TODO: Make it narrower -->
             <th class="text-start text-sm px-4 py-3 text-gray-500">Action</th>
         </tr>
     </thead>
@@ -11,7 +12,7 @@
             <tr class="hover:bg-gray-100">
                 <td class="align-top px-4 py-3 text-black min-w-[450px]">
                     <a href="{{.Origin}}" target="_blank" class="break-all">
-                        {{trimProtocol .Origin}}
+                        {{formatLink .Origin}}
                     </a>
                 </td>
                 <td class="align-top px-4 py-3 text-black">
@@ -23,6 +24,9 @@
                             <img src="/assets/images/ic_copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200">
                         </button>
                     </div>
+                </td>
+                <td class="align-top px-4 py-3 text-black min-w-[450px]">
+                    {{formatDate .CreatedAt}}
                 </td>
                 <td class="align-top px-4 py-3 text-blue-500">
                     <button hx-delete="/api/urls/{{.Username}}/{{.Hash}}" hx-target="closest tr" hx-swap="outerHTML">
