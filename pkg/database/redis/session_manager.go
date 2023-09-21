@@ -35,7 +35,7 @@ func (s sessionManagerService) Check(ctx context.Context, id uuid.UUID) (string,
 }
 
 func (s sessionManagerService) Invalidate(ctx context.Context, username string) error {
-	id, err := db.Get(context.Background(), "asdf").Result()
+	id, err := db.Get(context.Background(), username).Result()
 	if err != nil {
 		return err
 	}

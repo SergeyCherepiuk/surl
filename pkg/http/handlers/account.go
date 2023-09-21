@@ -16,7 +16,7 @@ type AccountHandler struct {
 }
 
 func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
-	data := components.DialogComponentData{
+	data := components.DeleteDialogComponentData{
 		Text: "Are you sure you want to delete the account?",
 		ConfirmIconButtonData: components.IconButtonComponentData{
 			Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
@@ -25,7 +25,7 @@ func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
 			Icon: "assets/images/ic-decline.svg", Alt: "Decline",
 		},
 	}
-	return c.Render(http.StatusOK, "components/dialog", data)
+	return c.Render(http.StatusOK, "components/delete-dialog", data)
 }
 
 func (h AccountHandler) GetIconsRow(c echo.Context) error {

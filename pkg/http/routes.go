@@ -58,7 +58,7 @@ func NewRouter(
 	account.DELETE("", accountHandler.Delete)
 
 	accountViews := account.Group("/views")
-	accountViews.GET("/dialog", accountHandler.GetDeleteDialog)
+	accountViews.GET("/delete-dialog", accountHandler.GetDeleteDialog)
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
 
 	urls := api.Group("/urls")
