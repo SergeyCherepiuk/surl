@@ -1,6 +1,6 @@
 <table class="table-auto w-full divide-y overflow-y-clip" onload="formatDates()">
     <thead class="bg-gray-100">
-        <tr>
+        <tr class="cursor-pointer">
             <th hx-get="/api/urls?sortBy=origin" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Origin</th>
             <th hx-get="/api/urls?sortBy=hash" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Link</th>
             <th hx-get="/api/urls?sortBy=last_used_at" hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap">Last used at</th>
@@ -22,7 +22,7 @@
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
                         <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
-                            <img src="/assets/images/ic_copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200">
+                            <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200">
                         </button>
                     </div>
                 </td>

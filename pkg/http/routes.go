@@ -33,6 +33,10 @@ func NewRouter(
 		AccountManagerService: accountManagerService,
 		SessionManagerService: sessionManagerService,
 	}
+	accountHandler := handlers.AccountHandler{
+		AccountManagerService: accountManagerService,
+		SessionManagerService: sessionManagerService,
+	}
 	urlHandler := handlers.UrlHandler{
 		UrlService: urlService,
 	}
@@ -46,6 +50,16 @@ func NewRouter(
 	}))
 	auth.POST("/login", userHandler.Login)
 	auth.POST("/signup", userHandler.SingUp)
+
+	account := api.Group("/account")
+	account.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {
+		return c.NoContent(http.StatusUnauthorized)
+	}))
+	account.DELETE("", accountHandler.Delete)
+
+	accountViews := account.Group("/views")
+	accountViews.GET("/dialog", accountHandler.GetDeleteDialog)
+	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
 
 	urls := api.Group("/urls")
 	urls.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {

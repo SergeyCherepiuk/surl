@@ -20,6 +20,8 @@ func init() {
 	Renderer.Templates["signup"] = pages.SignUpPage()
 
 	Renderer.Templates["components/urls-table"] = components.UrlsTableComponent()
+	Renderer.Templates["components/icons-row"] = components.IconsRowComponent()
+	Renderer.Templates["components/dialog"] = components.DialogComponent()
 }
 
 type Template struct {

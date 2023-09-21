@@ -1,0 +1,9 @@
+<div class="flex flex-row gap-4 items-center">
+    <snap>{{.Text}}</snap>
+    <div hx-delete="/api/account"> <!-- TODO: Add hx-target="#error" -->
+        {{template "icon-button" .ConfirmIconButtonData}}
+    </div>
+    <div hx-get="/api/account/views/icons-row" hx-target="#account-icons-row">
+        {{template "icon-button" .DeclineIconButtonData}}
+    </div>
+</div>

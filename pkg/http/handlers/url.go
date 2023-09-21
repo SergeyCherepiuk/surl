@@ -33,7 +33,7 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 		Origin:     url.Origin,
 		LastUsedAt: time.Now(),
 	}
-	err = h.UrlService.Update(context.Background(), username, hash, updates)
+	h.UrlService.Update(context.Background(), username, hash, updates)
 	return c.Redirect(http.StatusMovedPermanently, url.Origin)
 }
 

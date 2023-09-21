@@ -2,10 +2,14 @@
 
 {{define "content"}}
 <div class="flex flex-col gap-16 w-full h-full items-center">
-    <span class="text-3xl pt-8">Welcome, {{.Username}}!</span>
+    <div class="flex flex-col gap-4 items-center pt-8">
+        <span class="text-3xl">Welcome, {{.Username}}!</span>
+        <div id="account-icons-row" hx-get="/api/account/views/icons-row" hx-trigger="load once"></div>
+    </div>
+    
     <form hx-post="/api/urls" hx-target="#error" class="w-full md:w-[80%] lg:w-[65%] xl:w-1/2">
         <span id="error" class="text-red-500"></span>
-        {{template "input-with-button" .UrlInputData}} 
+        {{template "input-with-button" .UrlInputData}}
     </form>
     <div hx-get="/api/urls" hx-trigger="load once, submit from:form delay:50ms" class="w-full 2xl:w-[90%] overflow-x-auto"></div>
 </div>
