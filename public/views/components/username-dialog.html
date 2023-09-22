@@ -1,9 +1,9 @@
-<form hx-delete="/api/account" class="flex flex-row gap-4 items-center">  <!-- TODO: Add hx-target="#delete-error" -->
-    <snap>{{.Text}}</snap>
-    <div>
+<form hx-put="/api/account/username" class="flex flex-row gap-4 items-center"> <!-- TODO: Add hx-target="#username-error" -->
+    {{template "input" .InputData}}
+    <div> 
         {{template "icon-button" .ConfirmIconButtonData}}
     </div>
     <div hx-get="/api/account/views/icons-row" hx-target="#account-icons-row">
         {{template "icon-button" .DeclineIconButtonData}}
     </div>
-</form>
+</form>   

@@ -13,8 +13,8 @@ import (
 )
 
 type UserHandler struct {
-	SessionManagerService domain.SessionManagerService
-	AccountManagerService domain.AccountManagerService
+	AccountGetter  domain.AccountGetter
+	SessionCreator domain.SessionCreator
 }
 
 func (h UserHandler) Login(c echo.Context) error {
@@ -30,7 +30,7 @@ func (h UserHandler) Login(c echo.Context) error {
 		return c.String(http.StatusOK, err.Error())
 	}
 
-	user, err := h.AccountManagerService.Get(context.Background(), username)
+	user, err := h.AccountGetter.Get(context.Background(), username)
 	if err != nil {
 		return c.String(http.StatusOK, "No user with this username was found")
 	}
@@ -40,7 +40,7 @@ func (h UserHandler) Login(c echo.Context) error {
 	}
 
 	ttl := 7 * 24 * time.Hour
-	id, err := h.SessionManagerService.Create(context.Background(), user.Username, ttl)
+	id, err := h.SessionCreator.Create(context.Background(), user, ttl)
 	if err != nil {
 		return c.String(http.StatusOK, "Failed to create a session")
 	}
@@ -66,12 +66,8 @@ func (h UserHandler) SingUp(c echo.Context) error {
 	}
 	user.Password = string(hashedPassword)
 
-	if err := h.AccountManagerService.Create(context.Background(), user); err != nil {
-		return c.String(http.StatusOK, "Failed to save your account to the database. Please try again")
-	}
-
 	ttl := 7 * 24 * time.Hour
-	id, err := h.SessionManagerService.Create(context.Background(), user.Username, ttl)
+	id, err := h.SessionCreator.Create(context.Background(), user, ttl)
 	if err != nil {
 		c.Response().Header().Set("HX-Redirect", "/login")
 		return c.NoContent(http.StatusSeeOther)

@@ -12,15 +12,27 @@ type User struct {
 	Password string `json:"password" db:"password"`
 }
 
-type SessionManagerService interface {
-	Create(ctx context.Context, username string, ttl time.Duration) (uuid.UUID, error)
+type SessionChecker interface {
 	Check(ctx context.Context, id uuid.UUID) (string, error)
-	Invalidate(ctx context.Context, username string) error
 }
 
-type AccountManagerService interface {
+type AccountGetter interface {
 	Get(ctx context.Context, username string) (User, error)
+}
+
+type SessionCreator interface {
+	Create(ctx context.Context, user User, ttl time.Duration) (uuid.UUID, error)
+}
+
+type AccountCreator interface {
 	Create(ctx context.Context, user User) error
-	Update(ctx context.Context, username string, updates map[string]any) error
+}
+
+type AccountUpdater interface {
+	UpdateUsername(ctx context.Context, username, newUsername string) error
+	// TODO: UpdatePassword
+}
+
+type AccountDeleter interface {
 	Delete(ctx context.Context, username string) error
 }

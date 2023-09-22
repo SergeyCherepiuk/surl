@@ -13,11 +13,20 @@ import (
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(
-	accountManagerService domain.AccountManagerService,
-	sessionManagerService domain.SessionManagerService,
-	urlService domain.UrlService,
-) *echo.Echo {
+type Router struct {
+	SessionChecker domain.SessionChecker
+	AccountGetter  domain.AccountGetter
+
+	SessionCreator domain.SessionCreator
+
+	AccountUpdater domain.AccountUpdater
+
+	AccountDeleter domain.AccountDeleter
+
+	UrlService domain.UrlService
+}
+
+func (r Router) Build() *echo.Echo {
 	e := echo.New()
 	e.Use(echomiddleware.Logger())
 	e.Static("/static", "public/static")
@@ -25,20 +34,22 @@ func NewRouter(
 	e.Renderer = template.Renderer
 
 	// Middleware
-	authMiddleware := middleware.NewAuthMiddleware(sessionManagerService)
-	urlMiddleware := middleware.NewUrlMiddleware()
+	authMiddleware := middleware.AuthMiddleware{
+		SessionChecker: r.SessionChecker,
+	}
+	urlMiddleware := middleware.UrlMiddleware{}
 
 	// Handlers
 	userHandler := handlers.UserHandler{
-		AccountManagerService: accountManagerService,
-		SessionManagerService: sessionManagerService,
+		AccountGetter:  r.AccountGetter,
+		SessionCreator: r.SessionCreator,
 	}
 	accountHandler := handlers.AccountHandler{
-		AccountManagerService: accountManagerService,
-		SessionManagerService: sessionManagerService,
+		AccountUpdater: r.AccountUpdater,
+		AccountDeleter: r.AccountDeleter,
 	}
 	urlHandler := handlers.UrlHandler{
-		UrlService: urlService,
+		UrlService: r.UrlService,
 	}
 
 	// API routes
@@ -55,11 +66,13 @@ func NewRouter(
 	account.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
+	account.PUT("/username", accountHandler.UpdateUsername)
 	account.DELETE("", accountHandler.Delete)
 
 	accountViews := account.Group("/views")
-	accountViews.GET("/delete-dialog", accountHandler.GetDeleteDialog)
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
+	accountViews.GET("/username-dialog", accountHandler.GetUsernameDialog)
+	accountViews.GET("/delete-dialog", accountHandler.GetDeleteDialog)
 
 	urls := api.Group("/urls")
 	urls.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {

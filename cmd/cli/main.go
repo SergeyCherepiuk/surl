@@ -20,11 +20,24 @@ func init() {
 }
 
 func main() {
-	// Services
-	accountManagerService := postgres.NewAccountManagerService()
-	sessionManagerService := redis.NewSessionManagerService()
+	sessionChecker := redis.NewSessionChecker()
+	accountGetter := postgres.NewAccountGetter()
+
+	sessionCreator := redis.NewSessionCreator(postgres.NewAccountCreator())
+
+	accountUpdater := redis.NewAccountUpdater(postgres.NewAccountUpdater())
+
+	accountDeleter := redis.NewAccountDeleter(postgres.NewAccountDeleter())
+
 	urlService := postgres.NewUrlService()
 
-	e := http.NewRouter(accountManagerService, sessionManagerService, urlService)
+	e := http.Router{
+		SessionChecker: sessionChecker,
+		AccountGetter:  accountGetter,
+		SessionCreator: sessionCreator,
+		AccountUpdater: accountUpdater,
+		AccountDeleter: accountDeleter,
+		UrlService:     urlService,
+	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }

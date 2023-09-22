@@ -21,6 +21,7 @@ func init() {
 
 	Renderer.Templates["components/urls-table"] = components.UrlsTableComponent()
 	Renderer.Templates["components/icons-row"] = components.IconsRowComponent()
+	Renderer.Templates["components/username-dialog"] = components.UsernameDialogComponent()
 	Renderer.Templates["components/delete-dialog"] = components.DeleteDialogComponent()
 }
 

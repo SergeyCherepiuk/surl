@@ -8,15 +8,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type authMiddleware struct {
-	sessionManagerService domain.SessionManagerService
+type AuthMiddleware struct {
+	SessionChecker domain.SessionChecker
 }
 
-func NewAuthMiddleware(sessionManagerService domain.SessionManagerService) *authMiddleware {
-	return &authMiddleware{sessionManagerService: sessionManagerService}
-}
-
-func (m authMiddleware) IsAuthenticated(onError echo.HandlerFunc) echo.MiddlewareFunc {
+func (am AuthMiddleware) IsAuthenticated(onError echo.HandlerFunc) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cookie, err := c.Cookie("session_id")
@@ -29,7 +25,7 @@ func (m authMiddleware) IsAuthenticated(onError echo.HandlerFunc) echo.Middlewar
 				return onError(c)
 			}
 
-			username, err := m.sessionManagerService.Check(context.Background(), id)
+			username, err := am.SessionChecker.Check(context.Background(), id)
 			if err != nil {
 				return onError(c)
 			}
@@ -40,7 +36,7 @@ func (m authMiddleware) IsAuthenticated(onError echo.HandlerFunc) echo.Middlewar
 	}
 }
 
-func (m authMiddleware) IsNotAuthenticated(onError echo.HandlerFunc) echo.MiddlewareFunc {
+func (am AuthMiddleware) IsNotAuthenticated(onError echo.HandlerFunc) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			cookie, err := c.Cookie("session_id")
@@ -53,7 +49,7 @@ func (m authMiddleware) IsNotAuthenticated(onError echo.HandlerFunc) echo.Middle
 				return next(c)
 			}
 
-			username, err := m.sessionManagerService.Check(context.Background(), id)
+			username, err := am.SessionChecker.Check(context.Background(), id)
 			if err != nil {
 				return next(c)
 			}
