@@ -14,6 +14,7 @@ import (
 
 type UserHandler struct {
 	AccountGetter  domain.AccountGetter
+	AccountCreator domain.AccountCreator
 	SessionCreator domain.SessionCreator
 }
 
@@ -40,7 +41,7 @@ func (h UserHandler) Login(c echo.Context) error {
 	}
 
 	ttl := 7 * 24 * time.Hour
-	id, err := h.SessionCreator.Create(context.Background(), user, ttl)
+	id, err := h.SessionCreator.Create(context.Background(), user.Username, ttl)
 	if err != nil {
 		return c.String(http.StatusOK, "Failed to create a session")
 	}
@@ -66,8 +67,12 @@ func (h UserHandler) SingUp(c echo.Context) error {
 	}
 	user.Password = string(hashedPassword)
 
+	if err := h.AccountCreator.Create(context.Background(), user); err != nil {
+		return c.String(http.StatusOK, "Failed save your data to the database")
+	}
+
 	ttl := 7 * 24 * time.Hour
-	id, err := h.SessionCreator.Create(context.Background(), user, ttl)
+	id, err := h.SessionCreator.Create(context.Background(), user.Username, ttl)
 	if err != nil {
 		c.Response().Header().Set("HX-Redirect", "/login")
 		return c.NoContent(http.StatusSeeOther)

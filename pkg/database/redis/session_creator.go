@@ -4,31 +4,27 @@ import (
 	"context"
 	"time"
 
-	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
-type sessionCreator struct {
-	accountCreator domain.AccountCreator
+type sessionCreator struct{}
+
+func NewSessionCreator() *sessionCreator {
+	return &sessionCreator{}
 }
 
-func NewSessionCreator(accountCreator domain.AccountCreator) *sessionCreator {
-	return &sessionCreator{accountCreator: accountCreator}
-}
-
-func (sc sessionCreator) Create(ctx context.Context, user domain.User, ttl time.Duration) (uuid.UUID, error) {
+func (sc sessionCreator) Create(ctx context.Context, username string, ttl time.Duration) (uuid.UUID, error) {
 	id := uuid.New()
 
 	_, err := db.Pipelined(ctx, func(p redis.Pipeliner) error {
-		if err := p.Set(ctx, user.Username, id.String(), ttl).Err(); err != nil {
+		if err := p.Set(ctx, username, id.String(), ttl).Err(); err != nil {
 			return err
 		}
-		if err := p.Set(ctx, id.String(), user.Username, ttl).Err(); err != nil {
+		if err := p.Set(ctx, id.String(), username, ttl).Err(); err != nil {
 			return err
 		}
-
-		return sc.accountCreator.Create(ctx, user)
+		return nil
 	})
 
 	return id, err

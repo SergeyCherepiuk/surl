@@ -21,7 +21,7 @@ type AccountGetter interface {
 }
 
 type SessionCreator interface {
-	Create(ctx context.Context, user User, ttl time.Duration) (uuid.UUID, error)
+	Create(ctx context.Context, username string, ttl time.Duration) (uuid.UUID, error)
 }
 
 type AccountCreator interface {

@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
+	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
 	"github.com/SergeyCherepiuk/surl/public/views/components"
 	"github.com/labstack/echo/v4"
 )
@@ -62,9 +62,10 @@ func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
 func (h AccountHandler) UpdateUsername(c echo.Context) error {
 	username := c.Get("username").(string)
 	newUsername := c.FormValue("new-username")
-	fmt.Println(newUsername)
 
-	// TODO: Validation
+	if err := validation.ValidateUsernameChange(newUsername); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
 
 	if err := h.AccountUpdater.UpdateUsername(context.Background(), username, newUsername); err != nil {
 		return c.String(http.StatusOK, "Failed to update username in the database")

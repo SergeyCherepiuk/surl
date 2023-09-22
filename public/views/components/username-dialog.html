@@ -1,9 +1,12 @@
-<form hx-put="/api/account/username" class="flex flex-row gap-4 items-center"> <!-- TODO: Add hx-target="#username-error" -->
-    {{template "input" .InputData}}
-    <div> 
-        {{template "icon-button" .ConfirmIconButtonData}}
-    </div>
-    <div hx-get="/api/account/views/icons-row" hx-target="#account-icons-row">
-        {{template "icon-button" .DeclineIconButtonData}}
-    </div>
-</form>   
+<div class="flex flex-col">
+    <span id="username-error" class="text-red-500"></span>
+    <form hx-put="/api/account/username" hx-target="#username-error" class="flex flex-row gap-4 items-center">
+        {{template "input" .InputData}}
+        <div> 
+            {{template "icon-button" .ConfirmIconButtonData}}
+        </div>
+        <div hx-get="/api/account/views/icons-row" hx-target="#account-icons-row">
+            {{template "icon-button" .DeclineIconButtonData}}
+        </div>
+    </form>   
+</div>

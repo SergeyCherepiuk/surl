@@ -21,6 +21,6 @@ func NewAccountGetter() *accountGetter {
 func (ag accountGetter) Get(ctx context.Context, username string) (domain.User, error) {
 	params := map[string]any{"username": username}
 	user := domain.User{}
-	err := ag.getStmt.SelectContext(ctx, &user, params)
+	err := ag.getStmt.GetContext(ctx, &user, params)
 	return user, err
 }

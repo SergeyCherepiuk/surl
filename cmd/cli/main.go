@@ -23,7 +23,8 @@ func main() {
 	sessionChecker := redis.NewSessionChecker()
 	accountGetter := postgres.NewAccountGetter()
 
-	sessionCreator := redis.NewSessionCreator(postgres.NewAccountCreator())
+	accountCreator := postgres.NewAccountCreator()
+	sessionCreator := redis.NewSessionCreator()
 
 	accountUpdater := redis.NewAccountUpdater(postgres.NewAccountUpdater())
 
@@ -34,6 +35,7 @@ func main() {
 	e := http.Router{
 		SessionChecker: sessionChecker,
 		AccountGetter:  accountGetter,
+		AccountCreator: accountCreator,
 		SessionCreator: sessionCreator,
 		AccountUpdater: accountUpdater,
 		AccountDeleter: accountDeleter,

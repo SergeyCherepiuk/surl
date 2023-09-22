@@ -17,6 +17,7 @@ type Router struct {
 	SessionChecker domain.SessionChecker
 	AccountGetter  domain.AccountGetter
 
+	AccountCreator domain.AccountCreator
 	SessionCreator domain.SessionCreator
 
 	AccountUpdater domain.AccountUpdater
@@ -42,6 +43,7 @@ func (r Router) Build() *echo.Echo {
 	// Handlers
 	userHandler := handlers.UserHandler{
 		AccountGetter:  r.AccountGetter,
+		AccountCreator: r.AccountCreator,
 		SessionCreator: r.SessionCreator,
 	}
 	accountHandler := handlers.AccountHandler{
