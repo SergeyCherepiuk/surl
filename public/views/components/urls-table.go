@@ -8,11 +8,11 @@ import (
 	"github.com/SergeyCherepiuk/surl/domain"
 )
 
-type UrlsTableComponentData struct {
+type UrlsTableData struct {
 	Urls []domain.Url
 }
 
-func UrlsTableComponent() *template.Template {
+func UrlsTable() *template.Template {
 	return template.Must(template.New("urls-table.html").Funcs(template.FuncMap{
 		"formatLink": func(link string) string {
 			l := strings.TrimPrefix(link, "http://")

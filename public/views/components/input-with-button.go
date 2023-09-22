@@ -1,6 +1,6 @@
 package components
 
-type InputWithButtonComponentData struct {
+type InputWithButtonData struct {
 	Type        string
 	Name        string
 	Placeholder string

@@ -74,6 +74,7 @@ func (r Router) Build() *echo.Echo {
 	accountViews := account.Group("/views")
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
 	accountViews.GET("/username-dialog", accountHandler.GetUsernameDialog)
+	accountViews.GET("/password-dialog", accountHandler.GetPasswordDialog)
 	accountViews.GET("/delete-dialog", accountHandler.GetDeleteDialog)
 
 	urls := api.Group("/urls")
@@ -91,28 +92,28 @@ func (r Router) Build() *echo.Echo {
 	}))
 	authWeb.GET("/login", func(c echo.Context) error {
 		data := pages.LoginPageData{
-			UsernameInputData: components.InputComponentData{
+			UsernameInputData: components.InputData{
 				Type: "text", Name: "username", Placeholder: "Username",
 			},
-			PasswordInputData: components.InputComponentData{
+			PasswordInputData: components.InputData{
 				Type: "password", Name: "password", Placeholder: "Password",
 			},
-			ButtonData: components.ButtonComponentData{
-				Type: "submit", Text: "Log in",
+			ButtonData: components.ButtonData{
+				Type: "submit", Text: "Log in", IsPrimary: true,
 			},
 		}
 		return c.Render(http.StatusOK, "login", data)
 	})
 	authWeb.GET("/signup", func(c echo.Context) error {
 		data := pages.SignUpPageData{
-			UsernameInputData: components.InputComponentData{
+			UsernameInputData: components.InputData{
 				Type: "text", Name: "username", Placeholder: "Username",
 			},
-			PasswordInputData: components.InputComponentData{
+			PasswordInputData: components.InputData{
 				Type: "password", Name: "password", Placeholder: "Password",
 			},
-			ButtonData: components.ButtonComponentData{
-				Type: "submit", Text: "Sing up",
+			ButtonData: components.ButtonData{
+				Type: "submit", Text: "Sing up", IsPrimary: true,
 			},
 		}
 		return c.Render(http.StatusOK, "signup", data)
@@ -125,7 +126,7 @@ func (r Router) Build() *echo.Echo {
 	protectedWeb.GET("/", func(c echo.Context) error {
 		data := pages.HomePageData{
 			Username: c.Get("username").(string),
-			UrlInputData: components.InputWithButtonComponentData{
+			UrlInputData: components.InputWithButtonData{
 				Type: "text", Name: "origin", Placeholder: "Your link", Text: "Shorten",
 			},
 		}

@@ -19,10 +19,11 @@ func init() {
 	Renderer.Templates["login"] = pages.LoginPage()
 	Renderer.Templates["signup"] = pages.SignUpPage()
 
-	Renderer.Templates["components/urls-table"] = components.UrlsTableComponent()
-	Renderer.Templates["components/icons-row"] = components.IconsRowComponent()
-	Renderer.Templates["components/username-dialog"] = components.UsernameDialogComponent()
-	Renderer.Templates["components/delete-dialog"] = components.DeleteDialogComponent()
+	Renderer.Templates["components/urls-table"] = components.UrlsTable()
+	Renderer.Templates["components/icons-row"] = components.IconsRow()
+	Renderer.Templates["components/username-dialog"] = components.UsernameDialog()
+	Renderer.Templates["components/password-dialog"] = components.PasswordDialog()
+	Renderer.Templates["components/delete-dialog"] = components.DeleteDialog()
 }
 
 type Template struct {

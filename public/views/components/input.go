@@ -1,6 +1,6 @@
 package components
 
-type InputComponentData struct {
+type InputData struct {
 	Type        string
 	Name        string
 	Placeholder string

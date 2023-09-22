@@ -1,6 +1,6 @@
 package components
 
-type IconButtonComponentData struct {
+type IconButtonData struct {
 	Type string
 	Icon string
 	Alt  string

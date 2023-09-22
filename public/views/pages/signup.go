@@ -7,9 +7,9 @@ import (
 )
 
 type SignUpPageData struct {
-	UsernameInputData components.InputComponentData
-	PasswordInputData components.InputComponentData
-	ButtonData        components.ButtonComponentData
+	UsernameInputData components.InputData
+	PasswordInputData components.InputData
+	ButtonData        components.ButtonData
 }
 
 func SignUpPage() *template.Template {

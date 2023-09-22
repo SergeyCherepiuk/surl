@@ -1,6 +1,7 @@
 package components
 
-type ButtonComponentData struct {
-	Type string
-	Text string
+type ButtonData struct {
+	Type      string
+	Text      string
+	IsPrimary bool
 }

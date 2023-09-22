@@ -7,9 +7,9 @@ import (
 )
 
 type LoginPageData struct {
-	UsernameInputData components.InputComponentData
-	PasswordInputData components.InputComponentData
-	ButtonData        components.ButtonComponentData
+	UsernameInputData components.InputData
+	PasswordInputData components.InputData
+	ButtonData        components.ButtonData
 }
 
 func LoginPage() *template.Template {

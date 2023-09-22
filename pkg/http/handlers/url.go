@@ -53,7 +53,7 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusOK, "Failed too load urls from the database")
 	}
 
-	data := components.UrlsTableComponentData{Urls: urls}
+	data := components.UrlsTableData{Urls: urls}
 	return c.Render(http.StatusOK, "components/urls-table", data)
 }
 

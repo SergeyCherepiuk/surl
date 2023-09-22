@@ -17,14 +17,14 @@ type AccountHandler struct {
 }
 
 func (h AccountHandler) GetIconsRow(c echo.Context) error {
-	data := components.IconsRowComponentData{
-		ChangeUsernameIconButtonData: components.IconButtonComponentData{
+	data := components.IconsRowData{
+		ChangeUsernameIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-edit.svg", Alt: "Change username",
 		},
-		ChangePasswordIconButtonData: components.IconButtonComponentData{
+		ChangePasswordIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-security.svg", Alt: "Change password",
 		},
-		DeleteAccountIconButtonData: components.IconButtonComponentData{
+		DeleteAccountIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-delete.svg", Alt: "Delete account",
 		},
 	}
@@ -32,27 +32,48 @@ func (h AccountHandler) GetIconsRow(c echo.Context) error {
 }
 
 func (h AccountHandler) GetUsernameDialog(c echo.Context) error {
-	data := components.UsernameDialogComponentData{
-		InputData: components.InputComponentData{
+	data := components.UsernameDialogData{
+		InputData: components.InputData{
 			Type: "text", Name: "new-username", Placeholder: "New username",
 		},
-		ConfirmIconButtonData: components.IconButtonComponentData{
+		ConfirmIconButtonData: components.IconButtonData{
 			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
-		DeclineIconButtonData: components.IconButtonComponentData{
+		DeclineIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-decline.svg", Alt: "Decline",
 		},
 	}
 	return c.Render(http.StatusOK, "components/username-dialog", data)
 }
 
+func (h AccountHandler) GetPasswordDialog(c echo.Context) error {
+	data := components.PasswordDialogData{
+		OldPasswordInputData: components.InputData{
+			Type: "password", Name: "old-password", Placeholder: "Old password",
+		},
+		NewPasswordInputData: components.InputData{
+			Type: "password", Name: "new-password", Placeholder: "New password",
+		},
+		NewPasswordRepeatInputData: components.InputData{
+			Type: "password", Name: "new-password-repeat", Placeholder: "New password (repeat)",
+		},
+		SubmitButtonData: components.ButtonData{
+			Type: "submit", Text: "Change", IsPrimary: true,
+		},
+		GoBackButtonData: components.ButtonData{
+			Type: "button", Text: "Go back", IsPrimary: false,
+		},
+	}
+	return c.Render(http.StatusOK, "components/password-dialog", data)
+}
+
 func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
-	data := components.DeleteDialogComponentData{
+	data := components.DeleteDialogData{
 		Text: "Are you sure you want to delete the account?",
-		ConfirmIconButtonData: components.IconButtonComponentData{
+		ConfirmIconButtonData: components.IconButtonData{
 			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
-		DeclineIconButtonData: components.IconButtonComponentData{
+		DeclineIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-decline.svg", Alt: "Decline",
 		},
 	}

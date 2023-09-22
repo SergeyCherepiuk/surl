@@ -1,5 +1,5 @@
 package components
 
-type ErrorComponentData struct {
+type ErrorData struct {
 	Message string
 }
