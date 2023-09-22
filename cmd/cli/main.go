@@ -26,7 +26,8 @@ func main() {
 	accountCreator := postgres.NewAccountCreator()
 	sessionCreator := redis.NewSessionCreator()
 
-	accountUpdater := redis.NewAccountUpdater(postgres.NewAccountUpdater())
+	accountUpdater := postgres.NewAccountUpdater()
+	sessionUpdater := redis.NewAccountUpdater(accountUpdater)
 
 	accountDeleter := redis.NewAccountDeleter(postgres.NewAccountDeleter())
 
@@ -38,6 +39,7 @@ func main() {
 		AccountCreator: accountCreator,
 		SessionCreator: sessionCreator,
 		AccountUpdater: accountUpdater,
+		SessionUpdater: sessionUpdater,
 		AccountDeleter: accountDeleter,
 		UrlService:     urlService,
 	}.Build()

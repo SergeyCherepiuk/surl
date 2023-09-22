@@ -9,10 +9,13 @@ import (
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
 	"github.com/SergeyCherepiuk/surl/public/views/components"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AccountHandler struct {
+	AccountGetter  domain.AccountGetter
 	AccountUpdater domain.AccountUpdater
+	SessionUpdater domain.SessionUpdater
 	AccountDeleter domain.AccountDeleter
 }
 
@@ -84,16 +87,54 @@ func (h AccountHandler) UpdateUsername(c echo.Context) error {
 	username := c.Get("username").(string)
 	newUsername := c.FormValue("new-username")
 
-	if err := validation.ValidateUsernameChange(newUsername); err != nil {
+	if err := validation.ValidateUsername(newUsername); err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
 
-	if err := h.AccountUpdater.UpdateUsername(context.Background(), username, newUsername); err != nil {
+	// TODO: AccountUpdater.UpdateUsername is called implicitly here
+	if err := h.SessionUpdater.UpdateUsername(context.Background(), username, newUsername); err != nil {
 		return c.String(http.StatusOK, "Failed to update username in the database")
 	}
 
 	c.Response().Header().Set("HX-Refresh", "true")
 	return h.GetIconsRow(c)
+}
+
+func (h AccountHandler) UpdatePassword(c echo.Context) error {
+	username := c.Get("username").(string)
+	oldPassword := c.FormValue("old-password")
+	newPassword := c.FormValue("new-password")
+	newPasswordRepeat := c.FormValue("new-password-repeat")
+
+	if err := validation.ValidatePassword(oldPassword); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	} else if err := validation.ValidatePassword(newPassword); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+
+	user, err := h.AccountGetter.Get(context.Background(), username)
+	if err != nil {
+		return c.String(http.StatusOK, "Failed to find your account in the database")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword)); err != nil {
+		return c.String(http.StatusOK, "Wrong old password")
+	}
+
+	if newPassword != newPasswordRepeat {
+		return c.String(http.StatusOK, "New passwords aren't the same")
+	}
+
+	newPasswordHashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), 10)
+	if err != nil {
+		return c.String(http.StatusOK, "Failed to hash new password")
+	}
+
+	if err := h.AccountUpdater.UpdatePassword(context.Background(), username, string(newPasswordHashed)); err != nil {
+		return c.String(http.StatusOK, "Failed to update the password")
+	}
+
+	return c.NoContent(http.StatusOK)
 }
 
 func (h AccountHandler) Delete(c echo.Context) error {

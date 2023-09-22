@@ -7,15 +7,15 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type accountUpdater struct {
-	other domain.AccountUpdater
+type sessionUpdater struct {
+	accountUpdater domain.AccountUpdater
 }
 
-func NewAccountUpdater(other domain.AccountUpdater) *accountUpdater {
-	return &accountUpdater{other: other}
+func NewAccountUpdater(accountUpdater domain.AccountUpdater) *sessionUpdater {
+	return &sessionUpdater{accountUpdater: accountUpdater}
 }
 
-func (au accountUpdater) UpdateUsername(ctx context.Context, username, newUsername string) error {
+func (au sessionUpdater) UpdateUsername(ctx context.Context, username, newUsername string) error {
 	id, err := db.Get(ctx, username).Result()
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (au accountUpdater) UpdateUsername(ctx context.Context, username, newUserna
 			return err
 		}
 
-		return au.other.UpdateUsername(ctx, username, newUsername)
+		return au.accountUpdater.UpdateUsername(ctx, username, newUsername)
 	})
 
 	return err

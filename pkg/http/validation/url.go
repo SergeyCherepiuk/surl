@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func ValidateOrigin(origin string) error {
-	if !urlRegexp.MatchString(origin) {
+func ValidateUrl(url string) error {
+	if !urlRegexp.MatchString(url) {
 		return fmt.Errorf("invalid url")
 	}
 	return nil

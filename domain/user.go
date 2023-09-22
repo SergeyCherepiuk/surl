@@ -28,9 +28,13 @@ type AccountCreator interface {
 	Create(ctx context.Context, user User) error
 }
 
+type SessionUpdater interface {
+	UpdateUsername(ctx context.Context, username, newUsername string) error
+}
+
 type AccountUpdater interface {
 	UpdateUsername(ctx context.Context, username, newUsername string) error
-	// TODO: UpdatePassword
+	UpdatePassword(ctx context.Context, username, newPassword string) error
 }
 
 type AccountDeleter interface {

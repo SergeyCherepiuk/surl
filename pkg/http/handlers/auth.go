@@ -22,12 +22,9 @@ func (h UserHandler) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	if err := validation.ValidateAuthentication(
-		domain.User{
-			Username: c.FormValue("username"),
-			Password: c.FormValue("password"),
-		},
-	); err != nil {
+	if err := validation.ValidateUsername(username); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	} else if err := validation.ValidatePassword(password); err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
 
@@ -52,13 +49,18 @@ func (h UserHandler) Login(c echo.Context) error {
 }
 
 func (h UserHandler) SingUp(c echo.Context) error {
-	user := domain.User{
-		Username: c.FormValue("username"),
-		Password: c.FormValue("password"),
+	username := c.FormValue("username")
+	password := c.FormValue("password")
+
+	if err := validation.ValidateUsername(username); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	} else if err := validation.ValidatePassword(password); err != nil {
+		return c.String(http.StatusOK, err.Error())
 	}
 
-	if err := validation.ValidateAuthentication(user); err != nil {
-		return c.String(http.StatusOK, err.Error())
+	user := domain.User{
+		Username: username,
+		Password: password,
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)

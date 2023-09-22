@@ -67,7 +67,7 @@ func (h UrlHandler) Create(c echo.Context) error {
 		Origin:   origin,
 	}
 
-	if err := validation.ValidateOrigin(origin); err != nil {
+	if err := validation.ValidateUrl(origin); err != nil {
 		return c.String(http.StatusOK, err.Error())
 	}
 

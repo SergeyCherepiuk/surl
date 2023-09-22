@@ -2,14 +2,17 @@ package validation
 
 import (
 	"fmt"
-
-	"github.com/SergeyCherepiuk/surl/domain"
 )
 
-func ValidateAuthentication(user domain.User) error {
-	if !usernameRegexp.MatchString(user.Username) {
+func ValidateUsername(username string) error {
+	if !usernameRegexp.MatchString(username) {
 		return fmt.Errorf("invalid username")
-	} else if !passwordRegexp.MatchString(user.Password) {
+	}
+	return nil
+}
+
+func ValidatePassword(password string) error {
+	if !passwordRegexp.MatchString(password) {
 		return fmt.Errorf("invalid password")
 	}
 	return nil

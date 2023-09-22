@@ -21,6 +21,7 @@ type Router struct {
 	SessionCreator domain.SessionCreator
 
 	AccountUpdater domain.AccountUpdater
+	SessionUpdater domain.SessionUpdater
 
 	AccountDeleter domain.AccountDeleter
 
@@ -47,7 +48,9 @@ func (r Router) Build() *echo.Echo {
 		SessionCreator: r.SessionCreator,
 	}
 	accountHandler := handlers.AccountHandler{
+		AccountGetter:  r.AccountGetter,
 		AccountUpdater: r.AccountUpdater,
+		SessionUpdater: r.SessionUpdater,
 		AccountDeleter: r.AccountDeleter,
 	}
 	urlHandler := handlers.UrlHandler{
@@ -69,6 +72,7 @@ func (r Router) Build() *echo.Echo {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
 	account.PUT("/username", accountHandler.UpdateUsername)
+	account.PUT("/password", accountHandler.UpdatePassword)
 	account.DELETE("", accountHandler.Delete)
 
 	accountViews := account.Group("/views")
