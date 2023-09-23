@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -41,10 +42,14 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 	username := c.Get("username").(string)
 	sortBy := c.QueryParam("sortBy")
 
+	reversed, err := strconv.ParseBool(c.QueryParam("reversed"))
+	if err != nil {
+		reversed = false
+	}
+
 	var urls []domain.Url
-	var err error
 	if strings.TrimSpace(sortBy) != "" {
-		urls, err = h.UrlService.GetAllSorted(context.Background(), username, sortBy)
+		urls, err = h.UrlService.GetAllSorted(context.Background(), username, sortBy, reversed)
 	} else {
 		urls, err = h.UrlService.GetAll(context.Background(), username)
 	}
@@ -53,7 +58,11 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 		return c.String(http.StatusOK, "Failed too load urls from the database")
 	}
 
-	data := components.UrlsTableData{Urls: urls}
+	data := components.UrlsTableData{
+		Urls:     urls,
+		SortedBy: sortBy,
+		Reversed: !reversed,
+	}
 	return c.Render(http.StatusOK, "components/urls-table", data)
 }
 

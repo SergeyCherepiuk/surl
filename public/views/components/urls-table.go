@@ -9,7 +9,9 @@ import (
 )
 
 type UrlsTableData struct {
-	Urls []domain.Url
+	Urls     []domain.Url
+	SortedBy string
+	Reversed bool
 }
 
 func UrlsTable() *template.Template {

@@ -10,22 +10,24 @@ import (
 )
 
 type urlService struct {
-	getStmt          *sqlx.NamedStmt
-	getAllStmt       *sqlx.NamedStmt
-	getAllSortedStmt map[string]*sqlx.NamedStmt
-	createStmt       *sqlx.NamedStmt
-	updateStmt       *sqlx.NamedStmt
-	deleteStmt       *sqlx.NamedStmt
+	getStmt                  *sqlx.NamedStmt
+	getAllStmt               *sqlx.NamedStmt
+	getAllSortedStmt         map[string]*sqlx.NamedStmt
+	getAllSortedReversedStmt map[string]*sqlx.NamedStmt
+	createStmt               *sqlx.NamedStmt
+	updateStmt               *sqlx.NamedStmt
+	deleteStmt               *sqlx.NamedStmt
 }
 
 func NewUrlService() *urlService {
 	return &urlService{
-		getStmt:          internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username AND hash = :hash`),
-		getAllStmt:       internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
-		getAllSortedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
-		createStmt:       internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
-		updateStmt:       internal.MustPrepare(db, `UPDATE urls SET origin = :origin, last_used_at = :last_used_at WHERE username = :username AND hash = :hash`),
-		deleteStmt:       internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
+		getStmt:                  internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username AND hash = :hash`),
+		getAllStmt:               internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
+		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
+		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
+		createStmt:               internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
+		updateStmt:               internal.MustPrepare(db, `UPDATE urls SET origin = :origin, last_used_at = :last_used_at WHERE username = :username AND hash = :hash`),
+		deleteStmt:               internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
 	}
 }
 
@@ -46,10 +48,17 @@ func (s urlService) GetAll(ctx context.Context, username string) ([]domain.Url, 
 	return urls, err
 }
 
-func (s urlService) GetAllSorted(ctx context.Context, username, sortBy string) ([]domain.Url, error) {
+func (s urlService) GetAllSorted(ctx context.Context, username, sortBy string, reversed bool) ([]domain.Url, error) {
 	params := map[string]any{"username": username}
 
-	stmt, ok := s.getAllSortedStmt[sortBy]
+	var stmt *sqlx.NamedStmt
+	var ok bool
+	if reversed {
+		stmt, ok = s.getAllSortedReversedStmt[sortBy]
+	} else {
+		stmt, ok = s.getAllSortedStmt[sortBy]
+	}
+
 	if !ok {
 		return []domain.Url{}, fmt.Errorf("sorting by given attribute is unsupported")
 	}
