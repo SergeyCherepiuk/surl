@@ -134,6 +134,7 @@ func (h AccountHandler) UpdatePassword(c echo.Context) error {
 		return c.String(http.StatusOK, "Failed to update the password")
 	}
 
+	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)
 }
 
