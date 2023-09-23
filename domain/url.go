@@ -15,6 +15,7 @@ type Url struct {
 
 type UrlUpdates struct {
 	Origin     string
+	Hash       string
 	LastUsedAt time.Time
 }
 

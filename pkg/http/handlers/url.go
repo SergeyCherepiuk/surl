@@ -19,6 +19,36 @@ type UrlHandler struct {
 	UrlService domain.UrlService
 }
 
+func (h UrlHandler) GetOriginDialog(c echo.Context) error {
+	body := make(map[string]any)
+	if err := c.Bind(&body); err != nil {
+		return c.String(http.StatusOK, "Invalid request")
+	}
+
+	username, usernameOk := body["username"].(string)
+	hash, hashOk := body["hash"].(string)
+	origin, originOk := body["origin"].(string)
+	if !usernameOk || !hashOk || !originOk {
+		return c.String(http.StatusOK, "Failed to get url details from the request")
+	}
+
+	data := components.OriginDialogData{
+		Username: username,
+		Hash:     hash,
+		OriginInputData: components.InputData{
+			Type: "text", Name: "new-origin", Placeholder: "New origin link", Value: origin,
+		},
+		SubmitButtonData: components.ButtonData{
+			Type: "submit", Text: "Save", IsPrimary: true,
+		},
+		GoBackButtonData: components.ButtonData{
+			Type: "button", Text: "Go back", IsPrimary: false,
+		},
+	}
+
+	return c.Render(http.StatusOK, "components/origin-dialog", data)
+}
+
 func (h UrlHandler) GetOrigin(c echo.Context) error {
 	c.Response().Header().Set("Cache-Control", "no-cache, max-age=0")
 
@@ -32,6 +62,7 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 
 	updates := domain.UrlUpdates{
 		Origin:     url.Origin,
+		Hash:       url.Hash,
 		LastUsedAt: time.Now(),
 	}
 	h.UrlService.Update(context.Background(), username, hash, updates)
@@ -84,6 +115,33 @@ func (h UrlHandler) Create(c echo.Context) error {
 		return c.String(http.StatusOK, "Failed to save the url in the database")
 	}
 
+	return c.NoContent(http.StatusOK)
+}
+
+func (h UrlHandler) Update(c echo.Context) error {
+	username := c.Param("username")
+	hash := c.Param("hash")
+	newOrigin := c.FormValue("new-origin")
+
+	if err := validation.ValidateUrl(newOrigin); err != nil {
+		return c.String(http.StatusOK, err.Error())
+	}
+
+	url, err := h.UrlService.Get(context.Background(), username, hash)
+	if err != nil {
+		return c.String(http.StatusOK, "Failed to find link in the database")
+	}
+
+	updates := domain.UrlUpdates{
+		Origin:     newOrigin,
+		Hash:       fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(newOrigin))),
+		LastUsedAt: url.LastUsedAt,
+	}
+	if err := h.UrlService.Update(context.Background(), username, hash, updates); err != nil {
+		return c.String(http.StatusOK, "Failed to update the origin")
+	}
+
+	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)
 }
 

@@ -24,6 +24,7 @@ func init() {
 	Renderer.Templates["components/username-dialog"] = components.UsernameDialog()
 	Renderer.Templates["components/password-dialog"] = components.PasswordDialog()
 	Renderer.Templates["components/delete-dialog"] = components.DeleteDialog()
+	Renderer.Templates["components/origin-dialog"] = components.OriginDialog()
 }
 
 type Template struct {

@@ -26,7 +26,7 @@ func NewUrlService() *urlService {
 		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
 		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
 		createStmt:               internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
-		updateStmt:               internal.MustPrepare(db, `UPDATE urls SET origin = :origin, last_used_at = :last_used_at WHERE username = :username AND hash = :hash`),
+		updateStmt:               internal.MustPrepare(db, `UPDATE urls SET origin = :new_origin, hash = :new_hash, last_used_at = :new_last_used_at WHERE username = :username AND hash = :hash`),
 		deleteStmt:               internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
 	}
 }
@@ -80,10 +80,11 @@ func (s urlService) Create(ctx context.Context, url domain.Url) error {
 
 func (s urlService) Update(ctx context.Context, username, hash string, updates domain.UrlUpdates) error {
 	params := map[string]any{
-		"username":     username,
-		"hash":         hash,
-		"origin":       updates.Origin,
-		"last_used_at": updates.LastUsedAt,
+		"username":         username,
+		"hash":             hash,
+		"new_origin":       updates.Origin,
+		"new_hash":         updates.Hash,
+		"new_last_used_at": updates.LastUsedAt,
 	}
 	_, err := s.updateStmt.ExecContext(ctx, params)
 	return err

@@ -37,7 +37,7 @@ func (h AccountHandler) GetIconsRow(c echo.Context) error {
 func (h AccountHandler) GetUsernameDialog(c echo.Context) error {
 	data := components.UsernameDialogData{
 		InputData: components.InputData{
-			Type: "text", Name: "new-username", Placeholder: "New username",
+			Type: "text", Name: "new-username", Placeholder: "New username", Value: c.Get("username").(string),
 		},
 		ConfirmIconButtonData: components.IconButtonData{
 			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",

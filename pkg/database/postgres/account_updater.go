@@ -30,7 +30,7 @@ func (au accountUpdater) UpdateUsername(ctx context.Context, username, newUserna
 
 func (au accountUpdater) UpdatePassword(ctx context.Context, username, newPassword string) error {
 	params := map[string]any{
-		"username": username,
+		"username":     username,
 		"new_password": newPassword,
 	}
 	_, err := au.updatePasswordStmt.ExecContext(ctx, params)

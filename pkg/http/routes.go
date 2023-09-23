@@ -86,8 +86,12 @@ func (r Router) Build() *echo.Echo {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
 	urls.GET("", urlHandler.GetAll)
+	urls.PUT("/:username/:hash", urlHandler.Update)
 	urls.POST("", urlHandler.Create)
 	urls.DELETE("/:username/:hash", urlHandler.Delete, urlMiddleware.IsOwner)
+
+	urlsViews := urls.Group("/views")
+	urlsViews.GET("/origin-dialog", urlHandler.GetOriginDialog)
 
 	// Web pages routes
 	authWeb := e.Group("")
@@ -97,10 +101,10 @@ func (r Router) Build() *echo.Echo {
 	authWeb.GET("/login", func(c echo.Context) error {
 		data := pages.LoginPageData{
 			UsernameInputData: components.InputData{
-				Type: "text", Name: "username", Placeholder: "Username",
+				Type: "text", Name: "username", Placeholder: "Username", Value: "",
 			},
 			PasswordInputData: components.InputData{
-				Type: "password", Name: "password", Placeholder: "Password",
+				Type: "password", Name: "password", Placeholder: "Password", Value: "",
 			},
 			ButtonData: components.ButtonData{
 				Type: "submit", Text: "Log in", IsPrimary: true,
@@ -111,10 +115,10 @@ func (r Router) Build() *echo.Echo {
 	authWeb.GET("/signup", func(c echo.Context) error {
 		data := pages.SignUpPageData{
 			UsernameInputData: components.InputData{
-				Type: "text", Name: "username", Placeholder: "Username",
+				Type: "text", Name: "username", Placeholder: "Username", Value: "",
 			},
 			PasswordInputData: components.InputData{
-				Type: "password", Name: "password", Placeholder: "Password",
+				Type: "password", Name: "password", Placeholder: "Password", Value: "",
 			},
 			ButtonData: components.ButtonData{
 				Type: "submit", Text: "Sing up", IsPrimary: true,
