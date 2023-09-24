@@ -37,6 +37,10 @@ type AccountUpdater interface {
 	UpdatePassword(ctx context.Context, username, newPassword string) error
 }
 
+type SessionDeleter interface {
+	Delete(ctx context.Context, username string) error
+}
+
 type AccountDeleter interface {
 	Delete(ctx context.Context, username string) error
 }

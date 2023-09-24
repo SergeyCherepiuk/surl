@@ -6,6 +6,7 @@ type IconsRowData struct {
 	ChangeUsernameIconButtonData IconButtonData
 	ChangePasswordIconButtonData IconButtonData
 	DeleteAccountIconButtonData  IconButtonData
+	SignOutIconButtonData        IconButtonData
 }
 
 func IconsRow() *template.Template {

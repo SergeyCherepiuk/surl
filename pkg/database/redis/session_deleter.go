@@ -3,19 +3,16 @@ package redis
 import (
 	"context"
 
-	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/redis/go-redis/v9"
 )
 
-type accountDeleter struct {
-	other domain.AccountDeleter
+type sessionDeleter struct{}
+
+func NewSessionDeleter() *sessionDeleter {
+	return &sessionDeleter{}
 }
 
-func NewAccountDeleter(other domain.AccountDeleter) *accountDeleter {
-	return &accountDeleter{other: other}
-}
-
-func (ad accountDeleter) Delete(ctx context.Context, username string) error {
+func (ad sessionDeleter) Delete(ctx context.Context, username string) error {
 	id, err := db.Get(ctx, username).Result()
 	if err != nil {
 		return err
@@ -29,7 +26,7 @@ func (ad accountDeleter) Delete(ctx context.Context, username string) error {
 			return err
 		}
 
-		return ad.other.Delete(ctx, username)
+		return nil
 	})
 
 	return err

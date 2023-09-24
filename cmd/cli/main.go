@@ -29,17 +29,19 @@ func main() {
 	accountUpdater := postgres.NewAccountUpdater()
 	sessionUpdater := redis.NewAccountUpdater(accountUpdater)
 
-	accountDeleter := redis.NewAccountDeleter(postgres.NewAccountDeleter())
+	sessionDeleter := redis.NewSessionDeleter()
+	accountDeleter := postgres.NewAccountDeleter()
 
 	urlService := postgres.NewUrlService()
 
 	e := http.Router{
 		SessionChecker: sessionChecker,
 		AccountGetter:  accountGetter,
-		AccountCreator: accountCreator,
 		SessionCreator: sessionCreator,
-		AccountUpdater: accountUpdater,
+		AccountCreator: accountCreator,
 		SessionUpdater: sessionUpdater,
+		AccountUpdater: accountUpdater,
+		SessionDeleter: sessionDeleter,
 		AccountDeleter: accountDeleter,
 		UrlService:     urlService,
 	}.Build()

@@ -14,8 +14,9 @@ import (
 
 type AccountHandler struct {
 	AccountGetter  domain.AccountGetter
-	AccountUpdater domain.AccountUpdater
 	SessionUpdater domain.SessionUpdater
+	AccountUpdater domain.AccountUpdater
+	SessionDeleter domain.SessionDeleter
 	AccountDeleter domain.AccountDeleter
 }
 
@@ -29,6 +30,9 @@ func (h AccountHandler) GetIconsRow(c echo.Context) error {
 		},
 		DeleteAccountIconButtonData: components.IconButtonData{
 			Type: "button", Icon: "assets/images/ic-delete.svg", Alt: "Delete account",
+		},
+		SignOutIconButtonData: components.IconButtonData{
+			Type: "button", Icon: "assets/images/ic-exit.svg", Alt: "Sign out",
 		},
 	}
 	return c.Render(http.StatusOK, "components/icons-row", data)
@@ -144,6 +148,7 @@ func (h AccountHandler) Delete(c echo.Context) error {
 	if err := h.AccountDeleter.Delete(context.Background(), username); err != nil {
 		return c.String(http.StatusOK, "Failed to delete the account")
 	}
+	h.SessionDeleter.Delete(context.Background(), username)
 
 	c.SetCookie(&http.Cookie{
 		Name:    "session_id",

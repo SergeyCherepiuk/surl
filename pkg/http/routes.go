@@ -17,12 +17,13 @@ type Router struct {
 	SessionChecker domain.SessionChecker
 	AccountGetter  domain.AccountGetter
 
-	AccountCreator domain.AccountCreator
 	SessionCreator domain.SessionCreator
+	AccountCreator domain.AccountCreator
 
-	AccountUpdater domain.AccountUpdater
 	SessionUpdater domain.SessionUpdater
+	AccountUpdater domain.AccountUpdater
 
+	SessionDeleter domain.SessionDeleter
 	AccountDeleter domain.AccountDeleter
 
 	UrlService domain.UrlService
@@ -42,15 +43,16 @@ func (r Router) Build() *echo.Echo {
 	urlMiddleware := middleware.UrlMiddleware{}
 
 	// Handlers
-	userHandler := handlers.UserHandler{
+	authHandler := handlers.AuthHandler{
 		AccountGetter:  r.AccountGetter,
-		AccountCreator: r.AccountCreator,
 		SessionCreator: r.SessionCreator,
+		AccountCreator: r.AccountCreator,
+		SessionDeleter: r.SessionDeleter,
 	}
 	accountHandler := handlers.AccountHandler{
 		AccountGetter:  r.AccountGetter,
-		AccountUpdater: r.AccountUpdater,
 		SessionUpdater: r.SessionUpdater,
+		AccountUpdater: r.AccountUpdater,
 		AccountDeleter: r.AccountDeleter,
 	}
 	urlHandler := handlers.UrlHandler{
@@ -64,8 +66,11 @@ func (r Router) Build() *echo.Echo {
 	auth.Use(authMiddleware.IsNotAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
-	auth.POST("/login", userHandler.Login)
-	auth.POST("/signup", userHandler.SingUp)
+	auth.POST("/login", authHandler.Login)
+	auth.POST("/signup", authHandler.SingUp)
+	api.POST("/auth/signout", authHandler.SignOut, authMiddleware.IsAuthenticated(func(c echo.Context) error {
+		return c.NoContent(http.StatusUnauthorized)
+	}))
 
 	account := api.Group("/account")
 	account.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {

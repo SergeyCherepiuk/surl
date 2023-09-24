@@ -12,13 +12,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserHandler struct {
+type AuthHandler struct {
 	AccountGetter  domain.AccountGetter
 	AccountCreator domain.AccountCreator
 	SessionCreator domain.SessionCreator
+	SessionDeleter domain.SessionDeleter
 }
 
-func (h UserHandler) Login(c echo.Context) error {
+func (h AuthHandler) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
@@ -48,7 +49,7 @@ func (h UserHandler) Login(c echo.Context) error {
 	return c.NoContent(http.StatusSeeOther)
 }
 
-func (h UserHandler) SingUp(c echo.Context) error {
+func (h AuthHandler) SingUp(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
@@ -85,7 +86,24 @@ func (h UserHandler) SingUp(c echo.Context) error {
 	return c.NoContent(http.StatusSeeOther)
 }
 
-func (h UserHandler) setCookie(c echo.Context, id uuid.UUID, ttl time.Duration) {
+func (h AuthHandler) SignOut(c echo.Context) error {
+	username := c.Get("username").(string)
+
+	if err := h.SessionDeleter.Delete(context.Background(), username); err != nil {
+		return c.String(http.StatusOK, "Failed to invalidate the session")
+	}
+
+	c.SetCookie(&http.Cookie{
+		Name:    "session_id",
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now(),
+	})
+	c.Response().Header().Set("HX-Redirect", "/login")
+	return c.NoContent(http.StatusOK)
+}
+
+func (h AuthHandler) setCookie(c echo.Context, id uuid.UUID, ttl time.Duration) {
 	c.SetCookie(&http.Cookie{
 		Name:     "session_id",
 		Value:    id.String(),
