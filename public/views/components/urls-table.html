@@ -45,7 +45,7 @@
                             {{formatLink .Origin}}
                         </a>
                         <button hx-get="/api/urls/views/origin-dialog" hx-vals='{"origin": "{{.Origin}}", "username": "{{.Username}}", "hash": "{{.Hash}}"}' hx-target="closest body" hx-swap="afterbegin" class="w-6 h-6">
-                            <img src="/assets/images/ic-edit.svg" alt="Edit origin  " class="rounded-md bg-gray-100 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
+                            <img src="/assets/images/ic-edit.svg" alt="Edit origin" class="rounded-md bg-gray-100 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
                         </button>
                     </div>
                 </td>
