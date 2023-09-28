@@ -3,7 +3,7 @@
 {{define "content"}}
 <div class="flex flex-col gap-6 items-center justify-center h-screen w-screen p-4">
     <h1 class="text-3xl">Welcome back</h1>
-    <form hx-post="/api/auth/login" hx-target="#error" class="flex flex-col gap-8 items-center w-full md:w-[75%] lg:w-1/3 xl:w-1/4">
+    <form hx-post="/api/auth/login" hx-target="#error" class="flex flex-col gap-8 items-center w-full min-[400px]:w-[75%] min-[550px]:w-[60%] min-[700px]:w-[45%] min-[850px]:w-[350px]">
         <!-- TODO: Create error component -->
         <span id="error" class="text-red-500"></span>
         {{template "input" .UsernameInputData}}  

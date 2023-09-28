@@ -1,7 +1,9 @@
 <div class="flex flex-col">
     <span id="username-error" class="text-red-500"></span>
     <form hx-put="/api/account/username" hx-target="#username-error" class="flex flex-row gap-4 items-center">
-        {{template "input" .InputData}}
+        <div>
+            {{template "input" .InputData}}
+        </div>
         <div> 
             {{template "icon-button" .ConfirmIconButtonData}}
         </div>
