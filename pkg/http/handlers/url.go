@@ -61,6 +61,10 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 		return c.Render(http.StatusOK, "404", nil)
 	}
 
+	if url.ExpiresAt.Before(time.Now().In(time.UTC)) {
+		return c.Render(http.StatusOK, "404", nil)
+	}
+
 	updates := domain.UrlUpdates{
 		Origin:     url.Origin,
 		Hash:       url.Hash,
@@ -109,15 +113,18 @@ func (h UrlHandler) Listen(c echo.Context) error {
 
 	url, err := h.UrlService.Get(context.Background(), username, hash)
 	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
+		return c.String(http.StatusOK, "-")
 	}
 
-	for {
+	for url.ExpiresAt.After(time.Now().In(time.UTC)) {
 		expiresIn := time.Until(url.ExpiresAt).Round(time.Second)
+		sse.Send(c.Response().Writer, "url_update", []byte(expiresIn.String()))
 		c.Response().Flush()
-		sse.Send(c.Response().Writer, "expires_in_update", []byte(expiresIn.String()))
 		time.Sleep(time.Second)
 	}
+
+	sse.Send(c.Response().Writer, "url_expired", []byte("Expired"))
+	return c.NoContent(http.StatusOK)
 }
 
 func (h UrlHandler) Create(c echo.Context) error {
@@ -128,7 +135,7 @@ func (h UrlHandler) Create(c echo.Context) error {
 		Username:  c.Get("username").(string),
 		Hash:      fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(origin))),
 		Origin:    origin,
-		ExpiresAt: time.Now().In(time.UTC).Add(time.Hour),
+		ExpiresAt: time.Now().In(time.UTC).Add(5 * time.Second),
 	}
 
 	if err := validation.ValidateUrl(origin); err != nil {
