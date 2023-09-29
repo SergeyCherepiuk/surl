@@ -24,24 +24,24 @@ func (h AuthHandler) Login(c echo.Context) error {
 	password := c.FormValue("password")
 
 	if err := validation.ValidateUsername(username); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	} else if err := validation.ValidatePassword(password); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	user, err := h.AccountGetter.Get(context.Background(), username)
 	if err != nil {
-		return c.String(http.StatusOK, "No user with this username was found")
+		return c.Render(http.StatusOK, "components/error", "No user with this username was found")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return c.String(http.StatusOK, "Wrong password")
+		return c.Render(http.StatusOK, "components/error", "Wrong password")
 	}
 
 	ttl := 7 * 24 * time.Hour
 	id, err := h.SessionCreator.Create(context.Background(), user.Username, ttl)
 	if err != nil {
-		return c.String(http.StatusOK, "Failed to create a session")
+		return c.Render(http.StatusOK, "components/error", "Failed to create a session")
 	}
 
 	h.setCookie(c, id, ttl)
@@ -54,9 +54,9 @@ func (h AuthHandler) SingUp(c echo.Context) error {
 	password := c.FormValue("password")
 
 	if err := validation.ValidateUsername(username); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	} else if err := validation.ValidatePassword(password); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	user := domain.User{
@@ -66,12 +66,12 @@ func (h AuthHandler) SingUp(c echo.Context) error {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
-		return c.String(http.StatusOK, "Failed to encrypt your password. Please try again")
+		return c.Render(http.StatusOK, "components/error", "Failed to encrypt your password. Please try again")
 	}
 	user.Password = string(hashedPassword)
 
 	if err := h.AccountCreator.Create(context.Background(), user); err != nil {
-		return c.String(http.StatusOK, "Failed save your data to the database")
+		return c.Render(http.StatusOK, "components/error", "Failed save your data to the database")
 	}
 
 	ttl := 7 * 24 * time.Hour
@@ -90,7 +90,7 @@ func (h AuthHandler) SignOut(c echo.Context) error {
 	username := c.Get("username").(string)
 
 	if err := h.SessionDeleter.Delete(context.Background(), username); err != nil {
-		return c.String(http.StatusOK, "Failed to invalidate the session")
+		return c.Render(http.StatusOK, "components/error", "Failed to invalidate the session")
 	}
 
 	c.SetCookie(&http.Cookie{

@@ -3,7 +3,7 @@
 {{define "content"}}
 <div class="flex flex-col gap-16 w-full h-full items-center">
     <div class="flex flex-col gap-4 items-center pt-8">
-        <span class="text-3xl">Welcome, {{.Username}}!</span>
+        <span class="text-3xl">Dashboard ({{.Username}})</span>
         <div id="account-icons-row" hx-get="/api/account/views/icons-row" hx-trigger="load once"></div>
     </div>
     

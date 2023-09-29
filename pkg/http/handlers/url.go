@@ -22,14 +22,14 @@ type UrlHandler struct {
 func (h UrlHandler) GetOriginDialog(c echo.Context) error {
 	body := make(map[string]any)
 	if err := c.Bind(&body); err != nil {
-		return c.String(http.StatusOK, "Invalid request")
+		return c.Render(http.StatusOK, "components/error", "Invalid request")
 	}
 
 	username, usernameOk := body["username"].(string)
 	hash, hashOk := body["hash"].(string)
 	origin, originOk := body["origin"].(string)
 	if !usernameOk || !hashOk || !originOk {
-		return c.String(http.StatusOK, "Failed to get url details from the request")
+		return c.Render(http.StatusOK, "components/error", "Failed to get url details from the request")
 	}
 
 	data := components.OriginDialogData{
@@ -86,7 +86,7 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 	}
 
 	if err != nil {
-		return c.String(http.StatusOK, "Failed too load urls from the database")
+		return c.Render(http.StatusOK, "components/error", "Failed too load urls from the database")
 	}
 
 	data := components.UrlsTableData{
@@ -108,11 +108,11 @@ func (h UrlHandler) Create(c echo.Context) error {
 	}
 
 	if err := validation.ValidateUrl(origin); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	if err := h.UrlService.Create(context.Background(), url); err != nil {
-		return c.String(http.StatusOK, "Failed to save the url in the database")
+		return c.Render(http.StatusOK, "components/error", "Failed to save the url in the database")
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -124,12 +124,12 @@ func (h UrlHandler) Update(c echo.Context) error {
 	newOrigin := c.FormValue("new-origin")
 
 	if err := validation.ValidateUrl(newOrigin); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	url, err := h.UrlService.Get(context.Background(), username, hash)
 	if err != nil {
-		return c.String(http.StatusOK, "Failed to find link in the database")
+		return c.Render(http.StatusOK, "components/error", "Failed to find link in the database")
 	}
 
 	updates := domain.UrlUpdates{
@@ -138,7 +138,7 @@ func (h UrlHandler) Update(c echo.Context) error {
 		LastUsedAt: url.LastUsedAt,
 	}
 	if err := h.UrlService.Update(context.Background(), username, hash, updates); err != nil {
-		return c.String(http.StatusOK, "Failed to update the origin")
+		return c.Render(http.StatusOK, "components/error", "Failed to update the origin")
 	}
 
 	c.Response().Header().Set("HX-Refresh", "true")

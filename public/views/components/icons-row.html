@@ -1,14 +1,17 @@
-<div class="flex flex-row gap-6">
-    <div hx-get="/api/account/views/username-dialog" hx-target="#account-icons-row">
-        {{template "icon-button" .ChangeUsernameIconButtonData}}
-    </div>
-    <div hx-get="/api/account/views/password-dialog" hx-target="closest body" hx-swap="afterbegin">
-        {{template "icon-button" .ChangePasswordIconButtonData}}
-    </div>
-    <div hx-get="/api/account/views/delete-dialog" hx-target="#account-icons-row">
-        {{template "icon-button" .DeleteAccountIconButtonData}}
-    </div>
-    <div hx-post="/api/auth/signout">
-        {{template "icon-button" .SignOutIconButtonData}}
+<div class="flex flex-col gap-4 items-center">
+    <div id="icons-row-error w-full"></div>
+    <div class="flex flex-row gap-6">
+        <div hx-get="/api/account/views/username-dialog" hx-target="#account-icons-row">
+            {{template "icon-button" .ChangeUsernameIconButtonData}}
+        </div>
+        <div hx-get="/api/account/views/password-dialog" hx-target="closest body" hx-swap="afterbegin">
+            {{template "icon-button" .ChangePasswordIconButtonData}}
+        </div>
+        <div hx-get="/api/account/views/delete-dialog" hx-target="#account-icons-row">
+            {{template "icon-button" .DeleteAccountIconButtonData}}
+        </div>
+        <div hx-post="/api/auth/signout" hx-target="#icons-row-error">
+            {{template "icon-button" .SignOutIconButtonData}}
+        </div>
     </div>
 </div>

@@ -47,7 +47,7 @@ func (h AccountHandler) GetUsernameDialog(c echo.Context) error {
 			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
 		DeclineIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-decline.svg", Alt: "Decline",
+			Type: "button", Icon: "assets/images/ic-close.svg", Alt: "Decline",
 		},
 	}
 	return c.Render(http.StatusOK, "components/username-dialog", data)
@@ -81,7 +81,7 @@ func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
 			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
 		DeclineIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-decline.svg", Alt: "Decline",
+			Type: "button", Icon: "assets/images/ic-close.svg", Alt: "Decline",
 		},
 	}
 	return c.Render(http.StatusOK, "components/delete-dialog", data)
@@ -92,12 +92,12 @@ func (h AccountHandler) UpdateUsername(c echo.Context) error {
 	newUsername := c.FormValue("new-username")
 
 	if err := validation.ValidateUsername(newUsername); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	// TODO: AccountUpdater.UpdateUsername is called implicitly here
 	if err := h.SessionUpdater.UpdateUsername(context.Background(), username, newUsername); err != nil {
-		return c.String(http.StatusOK, "Failed to update username in the database")
+		return c.Render(http.StatusOK, "components/error", "Failed to update username in the database")
 	}
 
 	c.Response().Header().Set("HX-Refresh", "true")
@@ -111,31 +111,31 @@ func (h AccountHandler) UpdatePassword(c echo.Context) error {
 	newPasswordRepeat := c.FormValue("new-password-repeat")
 
 	if err := validation.ValidatePassword(oldPassword); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	} else if err := validation.ValidatePassword(newPassword); err != nil {
-		return c.String(http.StatusOK, err.Error())
+		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
 	user, err := h.AccountGetter.Get(context.Background(), username)
 	if err != nil {
-		return c.String(http.StatusOK, "Failed to find your account in the database")
+		return c.Render(http.StatusOK, "components/error", "Failed to find your account in the database")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword)); err != nil {
-		return c.String(http.StatusOK, "Wrong old password")
+		return c.Render(http.StatusOK, "components/error", "Wrong old password")
 	}
 
 	if newPassword != newPasswordRepeat {
-		return c.String(http.StatusOK, "New passwords aren't the same")
+		return c.Render(http.StatusOK, "components/error", "New passwords aren't the same")
 	}
 
 	newPasswordHashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), 10)
 	if err != nil {
-		return c.String(http.StatusOK, "Failed to hash new password")
+		return c.Render(http.StatusOK, "components/error", "Failed to hash new password")
 	}
 
 	if err := h.AccountUpdater.UpdatePassword(context.Background(), username, string(newPasswordHashed)); err != nil {
-		return c.String(http.StatusOK, "Failed to update the password")
+		return c.Render(http.StatusOK, "components/error", "Failed to update the password")
 	}
 
 	c.Response().Header().Set("HX-Refresh", "true")
@@ -146,7 +146,7 @@ func (h AccountHandler) Delete(c echo.Context) error {
 	username := c.Get("username").(string)
 
 	if err := h.AccountDeleter.Delete(context.Background(), username); err != nil {
-		return c.String(http.StatusOK, "Failed to delete the account")
+		return c.Render(http.StatusOK, "components/error", "Failed to delete the account")
 	}
 	h.SessionDeleter.Delete(context.Background(), username)
 

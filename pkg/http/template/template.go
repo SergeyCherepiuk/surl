@@ -19,6 +19,7 @@ func init() {
 	Renderer.Templates["login"] = pages.LoginPage()
 	Renderer.Templates["signup"] = pages.SignUpPage()
 
+	Renderer.Templates["components/error"] = components.Error()
 	Renderer.Templates["components/urls-table"] = components.UrlsTable()
 	Renderer.Templates["components/icons-row"] = components.IconsRow()
 	Renderer.Templates["components/username-dialog"] = components.UsernameDialog()
