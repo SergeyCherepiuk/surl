@@ -17,6 +17,14 @@
                     {{end}}
                 </div>
             </th>
+            <th hx-get='/api/urls?sortBy=expires_at{{if eq .SortedBy "expires_at"}}&reversed={{.Reversed}}{{end}}' hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap cursor-pointer">
+                <div class="flex flex-row gap-2">
+                    Expires in
+                    {{if eq .SortedBy "expires_at"}}
+                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
+                    {{end}}
+                </div>
+            </th>
             <th hx-get='/api/urls?sortBy=last_used_at{{if eq .SortedBy "last_used_at"}}&reversed={{.Reversed}}{{end}}' hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap cursor-pointer">
                 <div class="flex flex-row gap-2">
                     Last used at
@@ -58,6 +66,10 @@
                             <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
                         </button>
                     </div>
+                </td>
+                <!-- TODO: Check the direction of sorting -->
+                <td hx-ext="sse" sse-connect="/api/urls/{{.Username}}/{{.Hash}}/listen" sse-swap="expires_in_update" class="align-top px-4 py-3 min-w-[80px] text-black whitespace-nowrap">
+                    -
                 </td>
                 <td class="align-top px-4 py-3 text-black whitespace-nowrap">
                     {{formatDateWithTime .LastUsedAt}}

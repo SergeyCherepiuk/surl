@@ -91,6 +91,7 @@ func (r Router) Build() *echo.Echo {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
 	urls.GET("", urlHandler.GetAll)
+	urls.GET("/:username/:hash/listen", urlHandler.Listen)
 	urls.PUT("/:username/:hash", urlHandler.Update)
 	urls.POST("", urlHandler.Create)
 	urls.DELETE("/:username/:hash", urlHandler.Delete, urlMiddleware.IsOwner)

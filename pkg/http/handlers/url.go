@@ -104,12 +104,18 @@ func (h UrlHandler) Listen(c echo.Context) error {
 	c.Response().Header().Set("Connection", "keep-alive")
 	c.Response().Header().Set("Access-Control-Allow-Origin", "*")
 
-	expiresAt := time.Now().Add(time.Hour)
+	username := c.Param("username")
+	hash := c.Param("hash")
+
+	url, err := h.UrlService.Get(context.Background(), username, hash)
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
 
 	for {
-		expiresIn := time.Until(expiresAt)
+		expiresIn := time.Until(url.ExpiresAt).Round(time.Second)
 		c.Response().Flush()
-		sse.Send(c.Response().Writer, "urls-table-update", []byte(expiresIn.String()))
+		sse.Send(c.Response().Writer, "expires_in_update", []byte(expiresIn.String()))
 		time.Sleep(time.Second)
 	}
 }
@@ -119,9 +125,10 @@ func (h UrlHandler) Create(c echo.Context) error {
 	origin = strings.TrimSuffix(origin, "/")
 
 	url := domain.Url{
-		Username: c.Get("username").(string),
-		Hash:     fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(origin))),
-		Origin:   origin,
+		Username:  c.Get("username").(string),
+		Hash:      fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(origin))),
+		Origin:    origin,
+		ExpiresAt: time.Now().In(time.UTC).Add(time.Hour),
 	}
 
 	if err := validation.ValidateUrl(origin); err != nil {
