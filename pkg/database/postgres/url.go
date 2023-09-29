@@ -23,9 +23,9 @@ func NewUrlService() *urlService {
 	return &urlService{
 		getStmt:                  internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username AND hash = :hash`),
 		getAllStmt:               internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
-		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
-		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
-		createStmt:               internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin)`),
+		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
+		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
+		createStmt:               internal.MustPrepare(db, `INSERT INTO urls VALUES (:username, :hash, :origin, :expires_at)`),
 		updateStmt:               internal.MustPrepare(db, `UPDATE urls SET origin = :new_origin, hash = :new_hash, last_used_at = :new_last_used_at WHERE username = :username AND hash = :hash`),
 		deleteStmt:               internal.MustPrepare(db, `DELETE FROM urls WHERE username = :username AND hash = :hash`),
 	}
@@ -70,9 +70,10 @@ func (s urlService) GetAllSorted(ctx context.Context, username, sortBy string, r
 
 func (s urlService) Create(ctx context.Context, url domain.Url) error {
 	params := map[string]any{
-		"username": url.Username,
-		"hash":     url.Hash,
-		"origin":   url.Origin,
+		"username":   url.Username,
+		"hash":       url.Hash,
+		"origin":     url.Origin,
+		"expires_at": url.ExpiresAt,
 	}
 	_, err := s.createStmt.ExecContext(ctx, params)
 	return err

@@ -11,6 +11,7 @@ type Url struct {
 	Origin     string    `json:"origin" db:"origin"`
 	CreatedAt  time.Time `json:"created_at" db:"created_at"`
 	LastUsedAt time.Time `json:"last_used_at" db:"last_used_at"`
+	ExpiresAt  time.Time `json:"expires_at" db:"expires_at"`
 }
 
 type UrlUpdates struct {

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
+	"github.com/SergeyCherepiuk/surl/pkg/http/sse"
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
 	"github.com/SergeyCherepiuk/surl/public/views/components"
 	"github.com/labstack/echo/v4"
@@ -95,6 +96,22 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 		Reversed: !reversed,
 	}
 	return c.Render(http.StatusOK, "components/urls-table", data)
+}
+
+func (h UrlHandler) Listen(c echo.Context) error {
+	c.Response().Header().Set("Cache-Control", "no-cache")
+	c.Response().Header().Set("Content-Type", "text/event-stream")
+	c.Response().Header().Set("Connection", "keep-alive")
+	c.Response().Header().Set("Access-Control-Allow-Origin", "*")
+
+	expiresAt := time.Now().Add(time.Hour)
+
+	for {
+		expiresIn := time.Until(expiresAt)
+		c.Response().Flush()
+		sse.Send(c.Response().Writer, "urls-table-update", []byte(expiresIn.String()))
+		time.Sleep(time.Second)
+	}
 }
 
 func (h UrlHandler) Create(c echo.Context) error {
