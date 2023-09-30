@@ -16,17 +16,17 @@ func NewAccountUpdater(accountUpdater domain.AccountUpdater) *sessionUpdater {
 }
 
 func (au sessionUpdater) UpdateUsername(ctx context.Context, username, newUsername string) error {
-	id, err := db.Get(ctx, username).Result()
+	id, err := sessionsDb.Get(ctx, username).Result()
 	if err != nil {
 		return err
 	}
 
-	ttl, err := db.TTL(ctx, username).Result()
+	ttl, err := sessionsDb.TTL(ctx, username).Result()
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Pipelined(ctx, func(p redis.Pipeliner) error {
+	_, err = sessionsDb.Pipelined(ctx, func(p redis.Pipeliner) error {
 		if err := p.Set(ctx, id, newUsername, ttl).Err(); err != nil {
 			return err
 		}

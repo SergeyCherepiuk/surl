@@ -17,7 +17,7 @@ func NewSessionCreator() *sessionCreator {
 func (sc sessionCreator) Create(ctx context.Context, username string, ttl time.Duration) (uuid.UUID, error) {
 	id := uuid.New()
 
-	_, err := db.Pipelined(ctx, func(p redis.Pipeliner) error {
+	_, err := sessionsDb.Pipelined(ctx, func(p redis.Pipeliner) error {
 		if err := p.Set(ctx, username, id.String(), ttl).Err(); err != nil {
 			return err
 		}

@@ -13,5 +13,5 @@ func NewSessionChecker() *sessionChecker {
 }
 
 func (sc sessionChecker) Check(ctx context.Context, id uuid.UUID) (string, error) {
-	return db.Get(ctx, id.String()).Result()
+	return sessionsDb.Get(ctx, id.String()).Result()
 }

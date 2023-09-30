@@ -13,12 +13,12 @@ func NewSessionDeleter() *sessionDeleter {
 }
 
 func (ad sessionDeleter) Delete(ctx context.Context, username string) error {
-	id, err := db.Get(ctx, username).Result()
+	id, err := sessionsDb.Get(ctx, username).Result()
 	if err != nil {
 		return err
 	}
 
-	_, err = db.Pipelined(ctx, func(p redis.Pipeliner) error {
+	_, err = sessionsDb.Pipelined(ctx, func(p redis.Pipeliner) error {
 		if err := p.Del(ctx, username).Err(); err != nil {
 			return err
 		}
