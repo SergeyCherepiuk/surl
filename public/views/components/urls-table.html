@@ -69,11 +69,11 @@
                 </td>
                 <!-- TODO: Check the direction of sorting -->
                 <td class="align-top px-4 py-3 min-w-[80px] text-black whitespace-nowrap">
-                    <div id="url-sse" hx-ext="sse" sse-connect="/api/urls/{{.Username}}/{{.Hash}}/listen">
+                    <div id="sse-{{.Hash}}" hx-ext="sse" sse-connect="/api/urls/{{.Username}}/{{.Hash}}/listen">
                         <div sse-swap="url_update">
                             -
                         </div>
-                        <div sse-swap="url_expired" hx-target="#url-sse" hx-swap="outerHTML"></div>
+                        <div sse-swap="url_expired" hx-target="#sse-{{.Hash}}" hx-swap="outerHTML"></div>
                     </div>
                 </td>
                 <td class="align-top px-4 py-3 text-black whitespace-nowrap">

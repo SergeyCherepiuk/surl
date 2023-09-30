@@ -124,6 +124,7 @@ func (h UrlHandler) Listen(c echo.Context) error {
 	}
 
 	sse.Send(c.Response().Writer, "url_expired", []byte("Expired"))
+	c.Response().Flush()
 	return c.NoContent(http.StatusOK)
 }
 
