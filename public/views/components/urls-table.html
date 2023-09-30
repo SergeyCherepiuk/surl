@@ -1,5 +1,5 @@
 <table class="table-auto w-full divide-y overflow-y-clip" onload="formatDates()">
-    <thead class="bg-gray-100">
+    <thead class="bg-gray-200">
         <tr>
             <th hx-get='/api/urls?sortBy=origin{{if eq .SortedBy "origin"}}&reversed={{.Reversed}}{{end}}' hx-target="closest table" hx-trigger="click" hx-swap="outerHTML" class="text-start text-sm px-4 py-3 text-gray-500 whitespace-nowrap cursor-pointer">
                 <div class="flex flex-row gap-2">
@@ -46,14 +46,14 @@
     </thead>
     <tbody class="divide-y">
         {{range .Urls}}
-            <tr class="hover:bg-gray-100">
+            <tr class="hover:bg-gray-200">
                 <td class="align-top px-4 py-3 text-black min-w-[450px] break-all"> 
                     <div class="flex flex-row gap-2 items-center">
                         <a href="{{.Origin}}" target="_blank">
                             {{formatLink .Origin}}
                         </a>
                         <button hx-get="/api/urls/views/origin-dialog" hx-vals='{"origin": "{{.Origin}}", "username": "{{.Username}}", "hash": "{{.Hash}}"}' hx-target="closest body" hx-swap="afterbegin" class="w-6 h-6">
-                            <img src="/assets/images/ic-edit.svg" alt="Edit origin" class="rounded-md bg-gray-100 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
+                            <img src="/assets/images/ic-edit.svg" alt="Edit origin" class="rounded-md bg-gray-200 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
                         </button>
                     </div>
                 </td>
@@ -63,7 +63,7 @@
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
                         <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
-                            <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-100 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
+                            <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-200 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
                         </button>
                     </div>
                 </td>

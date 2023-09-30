@@ -131,15 +131,24 @@ func (h UrlHandler) Create(c echo.Context) error {
 	origin := c.FormValue("origin")
 	origin = strings.TrimSuffix(origin, "/")
 
+	if err := validation.ValidateUrl(origin); err != nil {
+		return c.Render(http.StatusOK, "components/error", err.Error())
+	}
+
+	expiresIn, err := strconv.ParseInt(c.FormValue("expires_in"), 10, 8)
+	if err != nil {
+		return c.Render(http.StatusOK, "components/error", "Failed to parse expiration time")
+	}
+
+	if err := validation.ValidateExpiration(int(expiresIn)); err != nil {
+		return c.Render(http.StatusOK, "components/error", err.Error())
+	}
+
 	url := domain.Url{
 		Username:  c.Get("username").(string),
 		Hash:      fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(origin))),
 		Origin:    origin,
-		ExpiresAt: time.Now().In(time.UTC).Add(5 * time.Second),
-	}
-
-	if err := validation.ValidateUrl(origin); err != nil {
-		return c.Render(http.StatusOK, "components/error", err.Error())
+		ExpiresAt: time.Now().In(time.UTC).Add(time.Duration(expiresIn) * time.Minute),
 	}
 
 	if err := h.UrlService.Create(context.Background(), url); err != nil {

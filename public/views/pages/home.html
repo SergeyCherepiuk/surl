@@ -9,7 +9,7 @@
     
     <form hx-post="/api/urls" hx-target="#error" class="flex flex-col gap-4 w-full px-4 md:w-[80%] lg:w-[65%] xl:w-1/2">
         <div id="error" class="w-full"></div>
-        {{template "input-with-button" .UrlInputData}}
+        {{template "url-input" .}}
     </form>
     <div hx-get="/api/urls" hx-trigger="load once, submit from:form delay:50ms" class="w-full 2xl:w-[90%] overflow-x-auto"></div>
 </div>

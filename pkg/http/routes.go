@@ -140,9 +140,6 @@ func (r Router) Build() *echo.Echo {
 	protectedWeb.GET("/", func(c echo.Context) error {
 		data := pages.HomePageData{
 			Username: c.Get("username").(string),
-			UrlInputData: components.InputWithButtonData{
-				Type: "text", Name: "origin", Placeholder: "Your link", Text: "Shorten",
-			},
 		}
 		return c.Render(http.StatusOK, "home", data)
 	})

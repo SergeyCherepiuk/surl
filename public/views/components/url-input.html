@@ -1,0 +1,14 @@
+{{define "url-input"}}
+<div class="flex rounded-md shadow-sm">
+	<input type="text" name="origin" placeholder="Your link" class="py-3 px-4 block w-full border-gray-200 rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500">
+	<select name="expires_in" class="bg-white border-x border-x-gray-200 text-gray-800 text-sm block p-2.5">
+		<option value="15">15 min</option>
+		<option value="30">30 min</option>
+		<option value="45">45 min</option>
+		<option value="60">1 hour</option>
+	</select>
+	<button type="submit" class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm">
+		Shorten
+	</button>
+</div>
+{{end}}

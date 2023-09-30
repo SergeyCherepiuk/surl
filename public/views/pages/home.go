@@ -2,13 +2,10 @@ package pages
 
 import (
 	"html/template"
-
-	"github.com/SergeyCherepiuk/surl/public/views/components"
 )
 
 type HomePageData struct {
-	Username     string
-	UrlInputData components.InputWithButtonData
+	Username string
 }
 
 func HomePage() *template.Template {
@@ -16,6 +13,6 @@ func HomePage() *template.Template {
 		"public/views/layout.html",
 		"public/views/pages/home.html",
 		"public/views/components/icon-button.html",
-		"public/views/components/input-with-button.html",
+		"public/views/components/url-input.html",
 	))
 }

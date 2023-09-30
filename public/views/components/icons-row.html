@@ -10,7 +10,7 @@
         <div hx-get="/api/account/views/delete-dialog" hx-target="#account-icons-row">
             {{template "icon-button" .DeleteAccountIconButtonData}}
         </div>
-        <div hx-post="/api/auth/signout" hx-target="#icons-row-error">
+        <div hx-post="/api/auth/signout" hx-target="#account-icons-row">
             {{template "icon-button" .SignOutIconButtonData}}
         </div>
     </div>
