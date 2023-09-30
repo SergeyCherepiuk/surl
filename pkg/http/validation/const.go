@@ -11,5 +11,5 @@ var (
 
 	// Source: https://stackoverflow.com/a/3809435
 	urlRegexp              = regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
-	expiresInAllowedValues = []int{15, 30, 45, 60}
+	expiresInAllowedValues = []int{1, 15, 30, 45, 60}
 )

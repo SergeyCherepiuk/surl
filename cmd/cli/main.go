@@ -32,7 +32,11 @@ func main() {
 	sessionDeleter := redis.NewSessionDeleter()
 	accountDeleter := postgres.NewAccountDeleter()
 
-	urlService := postgres.NewUrlService()
+	originGetter := redis.NewOriginGetter(postgres.NewOriginGetter())
+	urlGetter := postgres.NewUrlGetter()
+	urlCreator := postgres.NewUrlCreator()
+	urlUpdater := redis.NewUrlUpdater(postgres.NewUrlUpdater())
+	urlDeleter := redis.NewUrlDeleter(postgres.NewUrlDeleter())
 
 	e := http.Router{
 		SessionChecker: sessionChecker,
@@ -43,7 +47,11 @@ func main() {
 		AccountUpdater: accountUpdater,
 		SessionDeleter: sessionDeleter,
 		AccountDeleter: accountDeleter,
-		UrlService:     urlService,
+		OriginGetter:   originGetter,
+		UrlGetter:      urlGetter,
+		UrlCreator:     urlCreator,
+		UrlUpdater:     urlUpdater,
+		UrlDeleter:     urlDeleter,
 	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }

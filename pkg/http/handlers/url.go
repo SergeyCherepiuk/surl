@@ -17,7 +17,11 @@ import (
 )
 
 type UrlHandler struct {
-	UrlService domain.UrlService
+	OriginGetter domain.OriginGetter
+	UrlGetter    domain.UrlGetter
+	UrlCreator   domain.UrlCreator
+	UrlUpdater   domain.UrlUpdater
+	UrlDeleter   domain.UrlDeleter
 }
 
 func (h UrlHandler) GetOriginDialog(c echo.Context) error {
@@ -56,22 +60,18 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 	username := c.Param("username")
 	hash := c.Param("hash")
 
-	url, err := h.UrlService.Get(context.Background(), username, hash)
+	origin, _, err := h.OriginGetter.Get(context.Background(), username, hash)
 	if err != nil {
 		return c.Render(http.StatusOK, "404", nil)
 	}
 
-	if url.ExpiresAt.Before(time.Now().In(time.UTC)) {
-		return c.Render(http.StatusOK, "404", nil)
-	}
-
 	updates := domain.UrlUpdates{
-		Origin:     url.Origin,
-		Hash:       url.Hash,
+		Origin:     origin,
+		Hash:       hash,
 		LastUsedAt: time.Now(),
 	}
-	h.UrlService.Update(context.Background(), username, hash, updates)
-	return c.Redirect(http.StatusMovedPermanently, url.Origin)
+	h.UrlUpdater.Update(context.Background(), username, hash, updates) // NOTE: Error is ignored
+	return c.Redirect(http.StatusMovedPermanently, origin)
 }
 
 func (h UrlHandler) GetAll(c echo.Context) error {
@@ -85,9 +85,9 @@ func (h UrlHandler) GetAll(c echo.Context) error {
 
 	var urls []domain.Url
 	if strings.TrimSpace(sortBy) != "" {
-		urls, err = h.UrlService.GetAllSorted(context.Background(), username, sortBy, reversed)
+		urls, err = h.UrlGetter.GetAllSorted(context.Background(), username, sortBy, reversed)
 	} else {
-		urls, err = h.UrlService.GetAll(context.Background(), username)
+		urls, err = h.UrlGetter.GetAll(context.Background(), username)
 	}
 
 	if err != nil {
@@ -111,7 +111,7 @@ func (h UrlHandler) Listen(c echo.Context) error {
 	username := c.Param("username")
 	hash := c.Param("hash")
 
-	url, err := h.UrlService.Get(context.Background(), username, hash)
+	url, err := h.UrlGetter.Get(context.Background(), username, hash)
 	if err != nil {
 		return c.String(http.StatusOK, "-")
 	}
@@ -152,7 +152,7 @@ func (h UrlHandler) Create(c echo.Context) error {
 		ExpiresAt: time.Now().In(time.UTC).Add(time.Duration(expiresIn) * time.Minute),
 	}
 
-	if err := h.UrlService.Create(context.Background(), url); err != nil {
+	if err := h.UrlCreator.Create(context.Background(), url); err != nil {
 		return c.Render(http.StatusOK, "components/error", "Failed to save the url in the database")
 	}
 
@@ -168,7 +168,7 @@ func (h UrlHandler) Update(c echo.Context) error {
 		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
-	url, err := h.UrlService.Get(context.Background(), username, hash)
+	url, err := h.UrlGetter.Get(context.Background(), username, hash)
 	if err != nil {
 		return c.Render(http.StatusOK, "components/error", "Failed to find link in the database")
 	}
@@ -178,7 +178,7 @@ func (h UrlHandler) Update(c echo.Context) error {
 		Hash:       fmt.Sprintf("%08x", crc32.ChecksumIEEE([]byte(newOrigin))),
 		LastUsedAt: url.LastUsedAt,
 	}
-	if err := h.UrlService.Update(context.Background(), username, hash, updates); err != nil {
+	if err := h.UrlUpdater.Update(context.Background(), username, hash, updates); err != nil {
 		return c.Render(http.StatusOK, "components/error", "Failed to update the origin")
 	}
 
@@ -190,7 +190,7 @@ func (h UrlHandler) Delete(c echo.Context) error {
 	username := c.Param("username")
 	hash := c.Param("hash")
 
-	if err := h.UrlService.Delete(context.Background(), username, hash); err != nil {
+	if err := h.UrlDeleter.Delete(context.Background(), username, hash); err != nil {
 		return c.NoContent(http.StatusNoContent)
 	}
 

@@ -26,7 +26,11 @@ type Router struct {
 	SessionDeleter domain.SessionDeleter
 	AccountDeleter domain.AccountDeleter
 
-	UrlService domain.UrlService
+	OriginGetter domain.OriginGetter
+	UrlGetter    domain.UrlGetter
+	UrlCreator   domain.UrlCreator
+	UrlUpdater   domain.UrlUpdater
+	UrlDeleter   domain.UrlDeleter
 }
 
 func (r Router) Build() *echo.Echo {
@@ -56,7 +60,11 @@ func (r Router) Build() *echo.Echo {
 		AccountDeleter: r.AccountDeleter,
 	}
 	urlHandler := handlers.UrlHandler{
-		UrlService: r.UrlService,
+		OriginGetter: r.OriginGetter,
+		UrlGetter:    r.UrlGetter,
+		UrlCreator:   r.UrlCreator,
+		UrlUpdater:   r.UrlUpdater,
+		UrlDeleter:   r.UrlDeleter,
 	}
 
 	// API routes

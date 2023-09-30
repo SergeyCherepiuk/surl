@@ -20,11 +20,24 @@ type UrlUpdates struct {
 	LastUsedAt time.Time
 }
 
-type UrlService interface {
+type OriginGetter interface {
+	Get(ctx context.Context, username, hash string) (string, time.Duration, error)
+}
+
+type UrlGetter interface {
 	Get(ctx context.Context, username, hash string) (Url, error)
 	GetAll(ctx context.Context, username string) ([]Url, error)
 	GetAllSorted(ctx context.Context, username, sortBy string, reversed bool) ([]Url, error)
+}
+
+type UrlCreator interface {
 	Create(ctx context.Context, url Url) error
+}
+
+type UrlUpdater interface {
 	Update(ctx context.Context, username, hash string, updates UrlUpdates) error
+}
+
+type UrlDeleter interface {
 	Delete(ctx context.Context, username, hash string) error
 }
