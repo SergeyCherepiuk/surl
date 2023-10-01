@@ -8,6 +8,7 @@ import (
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/surl/pkg/database/redis"
 	"github.com/SergeyCherepiuk/surl/pkg/http"
+	"github.com/SergeyCherepiuk/surl/pkg/mail"
 	"github.com/joho/godotenv"
 )
 
@@ -17,6 +18,7 @@ func init() {
 	}
 	postgres.MustConnect()
 	redis.MustConnect()
+	mail.Initialize()
 }
 
 func main() {
@@ -32,6 +34,11 @@ func main() {
 	sessionDeleter := redis.NewSessionDeleter()
 	accountDeleter := postgres.NewAccountDeleter()
 
+	verificationChecker := postgres.NewVerificationChecker()
+	verificationGetter := postgres.NewVerificationGetter()
+	verificator := postgres.NewVerificator()
+	verificationDeleter := postgres.NewVerificationDeleter()
+
 	originGetter := redis.NewOriginGetter(postgres.NewOriginGetter())
 	urlGetter := postgres.NewUrlGetter()
 	urlCreator := postgres.NewUrlCreator()
@@ -39,19 +46,23 @@ func main() {
 	urlDeleter := redis.NewUrlDeleter(postgres.NewUrlDeleter())
 
 	e := http.Router{
-		SessionChecker: sessionChecker,
-		AccountGetter:  accountGetter,
-		SessionCreator: sessionCreator,
-		AccountCreator: accountCreator,
-		SessionUpdater: sessionUpdater,
-		AccountUpdater: accountUpdater,
-		SessionDeleter: sessionDeleter,
-		AccountDeleter: accountDeleter,
-		OriginGetter:   originGetter,
-		UrlGetter:      urlGetter,
-		UrlCreator:     urlCreator,
-		UrlUpdater:     urlUpdater,
-		UrlDeleter:     urlDeleter,
+		SessionChecker:      sessionChecker,
+		AccountGetter:       accountGetter,
+		SessionCreator:      sessionCreator,
+		AccountCreator:      accountCreator,
+		SessionUpdater:      sessionUpdater,
+		AccountUpdater:      accountUpdater,
+		SessionDeleter:      sessionDeleter,
+		AccountDeleter:      accountDeleter,
+		OriginGetter:        originGetter,
+		VerificationChecker: verificationChecker,
+		VerificationGetter:  verificationGetter,
+		Verificator:         verificator,
+		VerificationDeleter: verificationDeleter,
+		UrlGetter:           urlGetter,
+		UrlCreator:          urlCreator,
+		UrlUpdater:          urlUpdater,
+		UrlDeleter:          urlDeleter,
 	}.Build()
 	e.Start(fmt.Sprintf(":%s", os.Getenv("SERVER_PORT")))
 }

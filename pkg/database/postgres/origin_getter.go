@@ -27,7 +27,7 @@ func (og originGetter) Get(ctx context.Context, username, hash string) (string, 
 	}
 	var url domain.Url
 
-	if err := og.getStmt.Get(&url, params); err != nil {
+	if err := og.getStmt.GetContext(ctx, &url, params); err != nil {
 		return "", time.Until(time.Now().In(time.UTC)), err
 	}
 

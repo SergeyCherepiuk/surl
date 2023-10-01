@@ -62,7 +62,7 @@ func (h UrlHandler) GetOrigin(c echo.Context) error {
 
 	origin, _, err := h.OriginGetter.Get(context.Background(), username, hash)
 	if err != nil {
-		return c.Render(http.StatusOK, "404", nil)
+		return c.Render(http.StatusOK, "not-found", nil)
 	}
 
 	updates := domain.UrlUpdates{

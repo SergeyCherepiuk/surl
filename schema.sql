@@ -1,6 +1,12 @@
 create table users(
     username varchar(30) primary key,
-    password varchar(256) not null
+    password varchar(256) not null,
+    is_verified boolean not null default false
+);
+
+create table verification_requests(
+    id uuid primary key,
+    username varchar(30) not null references users(username) on delete cascade on update cascade
 );
 
 create table urls(

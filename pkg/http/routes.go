@@ -26,6 +26,11 @@ type Router struct {
 	SessionDeleter domain.SessionDeleter
 	AccountDeleter domain.AccountDeleter
 
+	VerificationChecker domain.VerificationChecker
+	VerificationGetter  domain.VerificationGetter
+	Verificator         domain.Verificator
+	VerificationDeleter domain.VerificationDeleter
+
 	OriginGetter domain.OriginGetter
 	UrlGetter    domain.UrlGetter
 	UrlCreator   domain.UrlCreator
@@ -44,6 +49,9 @@ func (r Router) Build() *echo.Echo {
 	authMiddleware := middleware.AuthMiddleware{
 		SessionChecker: r.SessionChecker,
 	}
+	verificationMiddleware := middleware.VerificationMiddleware{
+		VerificationChecker: r.VerificationChecker,
+	}
 	urlMiddleware := middleware.UrlMiddleware{}
 
 	// Handlers
@@ -58,6 +66,11 @@ func (r Router) Build() *echo.Echo {
 		SessionUpdater: r.SessionUpdater,
 		AccountUpdater: r.AccountUpdater,
 		AccountDeleter: r.AccountDeleter,
+	}
+	verificationHandler := handlers.VerificationHandler{
+		VerificationGetter:  r.VerificationGetter,
+		Verificator:         r.Verificator,
+		VerificationDeleter: r.VerificationDeleter,
 	}
 	urlHandler := handlers.UrlHandler{
 		OriginGetter: r.OriginGetter,
@@ -74,7 +87,7 @@ func (r Router) Build() *echo.Echo {
 	auth.Use(authMiddleware.IsNotAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
-	auth.POST("/login", authHandler.Login)
+	auth.POST("/login", authHandler.Login, verificationMiddleware.IsVerified)
 	auth.POST("/signup", authHandler.SingUp)
 	api.POST("/auth/signout", authHandler.SignOut, authMiddleware.IsAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
@@ -87,6 +100,9 @@ func (r Router) Build() *echo.Echo {
 	account.PUT("/username", accountHandler.UpdateUsername)
 	account.PUT("/password", accountHandler.UpdatePassword)
 	account.DELETE("", accountHandler.Delete)
+
+	verify := api.Group("/verify")
+	verify.GET("/:username/:id", verificationHandler.Verify)
 
 	accountViews := account.Group("/views")
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
