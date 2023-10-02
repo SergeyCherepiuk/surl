@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/http/validation"
-	"github.com/SergeyCherepiuk/surl/pkg/mail"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -19,6 +17,7 @@ type AuthHandler struct {
 	AccountCreator      domain.AccountCreator
 	SessionCreator      domain.SessionCreator
 	SessionDeleter      domain.SessionDeleter
+	VerificationSender  domain.VerificationSender
 	VerificationChecker domain.VerificationChecker
 	VerificationCreator domain.VerificationCreator
 }
@@ -43,7 +42,7 @@ func (h AuthHandler) Login(c echo.Context) error {
 	}
 
 	if err := h.VerificationChecker.Check(context.Background(), user.Username); err != nil {
-		return c.Render(http.StatusOK, "components/error", "Account is not verified")
+		return c.Render(http.StatusOK, "components/unverified-error", username)
 	}
 
 	ttl := 7 * 24 * time.Hour
@@ -90,9 +89,7 @@ func (h AuthHandler) SingUp(c echo.Context) error {
 	}
 
 	go func() {
-		// TODO: Send simple html formatted page instead
-		verificationLink := fmt.Sprintf("http://localhost:3000/api/verify/%s/%s", username, verificationRequestId)
-		mail.Sender.Send(email, "Account verification", verificationLink)
+		h.VerificationSender.Send(email, username, verificationRequestId)
 	}()
 
 	c.Response().Header().Set("HX-Redirect", "/login")

@@ -8,7 +8,7 @@ import (
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres"
 	"github.com/SergeyCherepiuk/surl/pkg/database/redis"
 	"github.com/SergeyCherepiuk/surl/pkg/http"
-	"github.com/SergeyCherepiuk/surl/pkg/mail"
+	"github.com/SergeyCherepiuk/surl/pkg/http/mail"
 	"github.com/joho/godotenv"
 )
 
@@ -34,6 +34,7 @@ func main() {
 	sessionDeleter := redis.NewSessionDeleter()
 	accountDeleter := postgres.NewAccountDeleter()
 
+	verificationSender := mail.NewVerificationSender()
 	verificationChecker := postgres.NewVerificationChecker()
 	verificationGetter := postgres.NewVerificationGetter()
 	verificationCreator := postgres.NewVerificationCreator()
@@ -56,6 +57,7 @@ func main() {
 		SessionDeleter:      sessionDeleter,
 		AccountDeleter:      accountDeleter,
 		OriginGetter:        originGetter,
+		VerificationSender:  verificationSender,
 		VerificationChecker: verificationChecker,
 		VerificationGetter:  verificationGetter,
 		VerificationCreator: verificationCreator,

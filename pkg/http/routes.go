@@ -26,6 +26,7 @@ type Router struct {
 	SessionDeleter domain.SessionDeleter
 	AccountDeleter domain.AccountDeleter
 
+	VerificationSender  domain.VerificationSender
 	VerificationChecker domain.VerificationChecker
 	VerificationGetter  domain.VerificationGetter
 	VerificationCreator domain.VerificationCreator
@@ -58,6 +59,7 @@ func (r Router) Build() *echo.Echo {
 		SessionCreator:      r.SessionCreator,
 		AccountCreator:      r.AccountCreator,
 		SessionDeleter:      r.SessionDeleter,
+		VerificationSender:  r.VerificationSender,
 		VerificationChecker: r.VerificationChecker,
 		VerificationCreator: r.VerificationCreator,
 	}
@@ -65,10 +67,14 @@ func (r Router) Build() *echo.Echo {
 		AccountGetter:  r.AccountGetter,
 		SessionUpdater: r.SessionUpdater,
 		AccountUpdater: r.AccountUpdater,
+		SessionDeleter: r.SessionDeleter,
 		AccountDeleter: r.AccountDeleter,
 	}
 	verificationHandler := handlers.VerificationHandler{
+		AccountGetter:       r.AccountGetter,
+		VerificationSender:  r.VerificationSender,
 		VerificationGetter:  r.VerificationGetter,
+		VerificationCreator: r.VerificationCreator,
 		Verificator:         r.Verificator,
 		VerificationDeleter: r.VerificationDeleter,
 	}
@@ -101,8 +107,9 @@ func (r Router) Build() *echo.Echo {
 	account.PUT("/password", accountHandler.UpdatePassword)
 	account.DELETE("", accountHandler.Delete)
 
-	verify := api.Group("/verify")
-	verify.GET("/:username/:id", verificationHandler.Verify)
+	verification := api.Group("/verification")
+	verification.GET("/:username/:id", verificationHandler.Verify)
+	verification.POST("/:username", verificationHandler.Send) // TODO: Use to resend verification email
 
 	accountViews := account.Group("/views")
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)

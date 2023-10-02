@@ -9,6 +9,10 @@ type VerificationRequest struct {
 	Username string `json:"username" db:"username"`
 }
 
+type VerificationSender interface {
+	Send(email, username, id string) error
+}
+
 type VerificationChecker interface {
 	Check(ctx context.Context, username string) error
 }
