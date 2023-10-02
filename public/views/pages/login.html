@@ -3,7 +3,7 @@
 {{define "content"}}
 <div class="flex flex-col gap-6 items-center justify-center h-screen w-screen p-4">
     <h1 class="text-3xl">Welcome back</h1>
-    <form hx-post="/api/auth/login" hx-target="#error" class="flex flex-col gap-8 items-center w-full min-[400px]:w-[75%] min-[550px]:w-[60%] min-[700px]:w-[45%] min-[850px]:w-[350px]">
+    <form hx-post="/api/auth/login" hx-target="#error" class="flex flex-col gap-5 items-center w-full min-[400px]:w-[75%] min-[550px]:w-[60%] min-[700px]:w-[45%] min-[850px]:w-[350px]">
         <div id="error" class="w-full"></div>
         {{template "input" .UsernameInputData}}  
         {{template "input" .PasswordInputData}}
