@@ -36,6 +36,7 @@ func main() {
 
 	verificationChecker := postgres.NewVerificationChecker()
 	verificationGetter := postgres.NewVerificationGetter()
+	verificationCreator := postgres.NewVerificationCreator()
 	verificator := postgres.NewVerificator()
 	verificationDeleter := postgres.NewVerificationDeleter()
 
@@ -57,6 +58,7 @@ func main() {
 		OriginGetter:        originGetter,
 		VerificationChecker: verificationChecker,
 		VerificationGetter:  verificationGetter,
+		VerificationCreator: verificationCreator,
 		Verificator:         verificator,
 		VerificationDeleter: verificationDeleter,
 		UrlGetter:           urlGetter,

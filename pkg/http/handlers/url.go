@@ -54,6 +54,7 @@ func (h UrlHandler) GetOriginDialog(c echo.Context) error {
 	return c.Render(http.StatusOK, "components/origin-dialog", data)
 }
 
+// BUG: Erases the link if called on expired link
 func (h UrlHandler) GetOrigin(c echo.Context) error {
 	c.Response().Header().Set("Cache-Control", "no-cache, max-age=0")
 

@@ -28,6 +28,7 @@ type Router struct {
 
 	VerificationChecker domain.VerificationChecker
 	VerificationGetter  domain.VerificationGetter
+	VerificationCreator domain.VerificationCreator
 	Verificator         domain.Verificator
 	VerificationDeleter domain.VerificationDeleter
 
@@ -49,17 +50,16 @@ func (r Router) Build() *echo.Echo {
 	authMiddleware := middleware.AuthMiddleware{
 		SessionChecker: r.SessionChecker,
 	}
-	verificationMiddleware := middleware.VerificationMiddleware{
-		VerificationChecker: r.VerificationChecker,
-	}
 	urlMiddleware := middleware.UrlMiddleware{}
 
 	// Handlers
 	authHandler := handlers.AuthHandler{
-		AccountGetter:  r.AccountGetter,
-		SessionCreator: r.SessionCreator,
-		AccountCreator: r.AccountCreator,
-		SessionDeleter: r.SessionDeleter,
+		AccountGetter:       r.AccountGetter,
+		SessionCreator:      r.SessionCreator,
+		AccountCreator:      r.AccountCreator,
+		SessionDeleter:      r.SessionDeleter,
+		VerificationChecker: r.VerificationChecker,
+		VerificationCreator: r.VerificationCreator,
 	}
 	accountHandler := handlers.AccountHandler{
 		AccountGetter:  r.AccountGetter,
@@ -87,7 +87,7 @@ func (r Router) Build() *echo.Echo {
 	auth.Use(authMiddleware.IsNotAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
 	}))
-	auth.POST("/login", authHandler.Login, verificationMiddleware.IsVerified)
+	auth.POST("/login", authHandler.Login)
 	auth.POST("/signup", authHandler.SingUp)
 	api.POST("/auth/signout", authHandler.SignOut, authMiddleware.IsAuthenticated(func(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
@@ -144,6 +144,9 @@ func (r Router) Build() *echo.Echo {
 	})
 	authWeb.GET("/signup", func(c echo.Context) error {
 		data := pages.SignUpPageData{
+			EmailInputData: components.InputData{
+				Type: "email", Name: "email", Placeholder: "Email", Value: "",
+			},
 			UsernameInputData: components.InputData{
 				Type: "text", Name: "username", Placeholder: "Username", Value: "",
 			},

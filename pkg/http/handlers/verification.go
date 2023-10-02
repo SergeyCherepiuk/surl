@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/SergeyCherepiuk/surl/domain"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,10 +16,7 @@ type VerificationHandler struct {
 
 func (vh VerificationHandler) Verify(c echo.Context) error {
 	username := c.Param("username")
-	id, err := uuid.Parse(c.Param("id"))
-	if err != nil {
-		return c.Render(http.StatusOK, "not-found", nil)
-	}
+	id := c.Param("id")
 
 	// TODO: Use "verificationRequest" to check if it's still valid (after adding expiration time to it)
 	if _, err := vh.VerificationGetter.Get(context.Background(), username, id); err != nil {

@@ -5,7 +5,6 @@ import (
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres/internal"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -19,7 +18,7 @@ func NewVerificationGetter() *verificationGetter {
 	}
 }
 
-func (vg verificationGetter) Get(ctx context.Context, username string, id uuid.UUID) (domain.VerificationRequest, error) {
+func (vg verificationGetter) Get(ctx context.Context, username, id string) (domain.VerificationRequest, error) {
 	params := map[string]any{
 		"username": username,
 		"id":       id,

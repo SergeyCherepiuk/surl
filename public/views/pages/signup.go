@@ -7,6 +7,7 @@ import (
 )
 
 type SignUpPageData struct {
+	EmailInputData    components.InputData
 	UsernameInputData components.InputData
 	PasswordInputData components.InputData
 	ButtonData        components.ButtonData

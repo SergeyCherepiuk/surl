@@ -9,6 +9,7 @@ import (
 
 type User struct {
 	Username   string `json:"username" db:"username"`
+	Email      string `json:"email" db:"email"`
 	Password   string `json:"password" db:"password"`
 	IsVerified bool   `json:"is_verified" db:"is_verified"`
 }

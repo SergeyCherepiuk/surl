@@ -2,13 +2,11 @@ package domain
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
 type VerificationRequest struct {
-	ID       uuid.UUID `json:"id" db:"id"`
-	Username string    `json:"username" db:"username"`
+	ID       string `json:"id" db:"id"`
+	Username string `json:"username" db:"username"`
 }
 
 type VerificationChecker interface {
@@ -16,7 +14,11 @@ type VerificationChecker interface {
 }
 
 type VerificationGetter interface {
-	Get(ctx context.Context, username string, id uuid.UUID) (VerificationRequest, error)
+	Get(ctx context.Context, username, id string) (VerificationRequest, error)
+}
+
+type VerificationCreator interface {
+	Create(ctx context.Context, username, id string) error
 }
 
 type Verificator interface {
