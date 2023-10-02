@@ -1,7 +1,11 @@
 package mail
 
 import (
+	"bytes"
 	"fmt"
+
+	"github.com/SergeyCherepiuk/surl/pkg/http/template"
+	"github.com/SergeyCherepiuk/surl/public/views/pages"
 )
 
 type verificationSender struct{}
@@ -11,7 +15,17 @@ func NewVerificationSender() *verificationSender {
 }
 
 func (vs verificationSender) Send(email, username, id string) error {
-	// TODO: Send simple html formatted page instead
-	verificationLink := fmt.Sprintf("http://localhost:3000/api/verification/%s/%s", username, id)
-	return Sender.Send(email, "Account verification", verificationLink)
+	var html bytes.Buffer
+
+	data := pages.VerificationMailPageData{
+		Username: username,
+		Link:     fmt.Sprintf("http://localhost:3000/api/verification/%s/%s", username, id),
+	}
+	if err := template.Renderer.Templates["verification-mail"].Execute(&html, data); err != nil {
+		return err
+	}
+
+	fmt.Println(html.String())
+
+	return Sender.SendHTML(email, "Account verification", html.String())
 }

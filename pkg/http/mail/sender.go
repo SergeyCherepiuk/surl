@@ -29,7 +29,7 @@ func Initialize() {
 	}
 }
 
-func (s sender) Send(to, subject, message string) error {
+func (s sender) SendMessage(to, subject, message string) error {
 	return smtp.SendMail(
 		s.SmtpAddr, s.Auth, s.Email, []string{to},
 		formatMessage(s.Email, to, subject, message),
@@ -40,5 +40,19 @@ func formatMessage(from, to, subject, message string) []byte {
 	return []byte(fmt.Sprintf(
 		"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s",
 		from, to, subject, message,
+	))
+}
+
+func (s sender) SendHTML(to, subject, html string) error {
+	return smtp.SendMail(
+		s.SmtpAddr, s.Auth, s.Email, []string{to},
+		formatHTML(s.Email, to, subject, html),
+	)
+}
+
+func formatHTML(from, to, subject, html string) []byte {
+	return []byte(fmt.Sprintf(
+		"From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\r\n\r\n%s",
+		from, to, subject, html,
 	))
 }

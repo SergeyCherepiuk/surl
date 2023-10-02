@@ -18,6 +18,7 @@ func init() {
 	Renderer.Templates["not-found"] = pages.NotFoundPage()
 	Renderer.Templates["login"] = pages.LoginPage()
 	Renderer.Templates["signup"] = pages.SignUpPage()
+	Renderer.Templates["verification-mail"] = pages.VerificationMail()
 	Renderer.Templates["verified"] = pages.VerifiedPage()
 
 	Renderer.Templates["components/error"] = components.Error()
