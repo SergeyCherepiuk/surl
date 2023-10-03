@@ -10,7 +10,7 @@ type VerificationRequest struct {
 }
 
 type VerificationSender interface {
-	Send(email, username, id string) error
+	Send(email string, verificationRequest VerificationRequest) error
 }
 
 type VerificationChecker interface {
@@ -22,7 +22,7 @@ type VerificationGetter interface {
 }
 
 type VerificationCreator interface {
-	Create(ctx context.Context, username, id string) error
+	Create(ctx context.Context, verificationRequest VerificationRequest) error
 }
 
 type Verificator interface {

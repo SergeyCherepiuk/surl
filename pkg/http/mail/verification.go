@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/http/template"
 	"github.com/SergeyCherepiuk/surl/public/views/pages"
 )
@@ -14,14 +15,20 @@ func NewVerificationSender() *verificationSender {
 	return &verificationSender{}
 }
 
-func (vs verificationSender) Send(email, username, id string) error {
+func (vs verificationSender) Send(email string, verificationRequest domain.VerificationRequest) error {
 	var html bytes.Buffer
 
-	data := pages.VerificationMailPageData{
-		Username: username,
-		Link:     fmt.Sprintf("http://localhost:3000/api/verification/%s/%s", username, id),
+	link := fmt.Sprintf(
+		"http://localhost:3000/api/verification/%s/%s",
+		verificationRequest.Username, verificationRequest.ID,
+	)
+	data := pages.MailPageData{
+		Username:   verificationRequest.Username,
+		Message:    "Please click the button below to verify your account",
+		Link:       link,
+		ButtonText: "Verify",
 	}
-	if err := template.Renderer.Templates["verification-mail"].Execute(&html, data); err != nil {
+	if err := template.Renderer.Templates["mail"].Execute(&html, data); err != nil {
 		return err
 	}
 

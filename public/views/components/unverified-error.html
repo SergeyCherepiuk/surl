@@ -1,6 +1,6 @@
 <div class="flex flex-row w-full items-center justify-between bg-red-50 border border-red-400 text-sm rounded-md p-4" role="alert">
     <span class="text-red-600"><b>Error:</b> The account is not verified. Please check your email</span>
-    <button hx-post="/api/verification/{{.}}" hx-swap="delete" hx-target="closest div" class="text-white p-2 rounded-md bg-red-400">
+    <button hx-post="/api/verification/send/{{.}}" hx-swap="delete" hx-target="closest div" class="text-white p-2 rounded-md bg-red-400">
         <b class="truncate">Re-send</b> 
     </button>
 </div>

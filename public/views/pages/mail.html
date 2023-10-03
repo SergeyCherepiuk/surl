@@ -10,12 +10,12 @@
                 <h1 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Hello, {{.Username}}</h1>
             </td></tr>
             <tr><td>
-                <span>Please click the button below to verify your account</span>
+                <span>{{.Message}}</span>
             </td></tr>
             <tr><td>
                 <div style="padding-top: 0.75rem; padding-bottom: 0.75rem;">
                     <a href="{{.Link}}" target="_blank" style="text-decoration: none; padding: 0.75rem; background-color: cornflowerblue;">
-                        <b style="color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Verify</b>
+                        <b style="color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{.ButtonText}}</b>
                     </a> 
                 </div>
             </td></tr>

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 
+	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/SergeyCherepiuk/surl/pkg/database/postgres/internal"
 	"github.com/jmoiron/sqlx"
 )
@@ -17,10 +18,10 @@ func NewVerificationCreator() *verificationCreator {
 	}
 }
 
-func (vc verificationCreator) Create(ctx context.Context, username, id string) error {
+func (vc verificationCreator) Create(ctx context.Context, verificationRequest domain.VerificationRequest) error {
 	params := map[string]any{
-		"username": username,
-		"id":       id,
+		"username": verificationRequest.Username,
+		"id":       verificationRequest.ID,
 	}
 	_, err := vc.createStmt.ExecContext(ctx, params)
 	return err

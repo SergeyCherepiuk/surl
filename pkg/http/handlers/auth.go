@@ -83,13 +83,16 @@ func (h AuthHandler) SingUp(c echo.Context) error {
 		return c.Render(http.StatusOK, "components/error", "Failed save your data to the database")
 	}
 
-	verificationRequestId := uuid.NewString()
-	if err := h.VerificationCreator.Create(context.Background(), username, verificationRequestId); err != nil {
+	verificationRequest := domain.VerificationRequest{
+		ID:       uuid.NewString(),
+		Username: username,
+	}
+	if err := h.VerificationCreator.Create(context.Background(), verificationRequest); err != nil {
 		return c.Render(http.StatusOK, "components/error", "Failed to send verification email try to login and request a new one")
 	}
 
 	go func() {
-		h.VerificationSender.Send(email, username, verificationRequestId)
+		h.VerificationSender.Send(email, verificationRequest)
 	}()
 
 	c.Response().Header().Set("HX-Redirect", "/login")

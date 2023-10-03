@@ -47,13 +47,16 @@ func (h VerificationHandler) Send(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "User is already verified")
 	}
 
-	verificationRequestId := uuid.NewString()
-	if err := h.VerificationCreator.Create(context.Background(), username, verificationRequestId); err != nil {
+	verificationRequest := domain.VerificationRequest{
+		ID:       uuid.NewString(),
+		Username: username,
+	}
+	if err := h.VerificationCreator.Create(context.Background(), verificationRequest); err != nil {
 		return c.String(http.StatusInternalServerError, "Failed to send verification email try to login and request a new one")
 	}
 
 	go func() {
-		h.VerificationSender.Send(user.Email, username, verificationRequestId)
+		h.VerificationSender.Send(user.Email, verificationRequest)
 	}()
 
 	return c.NoContent(http.StatusOK)

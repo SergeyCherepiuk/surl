@@ -33,6 +33,11 @@ type Router struct {
 	Verificator         domain.Verificator
 	VerificationDeleter domain.VerificationDeleter
 
+	PasswordResetSender  domain.PasswordResetSender
+	PasswordResetGetter  domain.PasswordResetGetter
+	PasswordResetCreator domain.PasswordResetCreator
+	PasswordResetDeleter domain.PasswordResetDeleter
+
 	OriginGetter domain.OriginGetter
 	UrlGetter    domain.UrlGetter
 	UrlCreator   domain.UrlCreator
@@ -78,6 +83,14 @@ func (r Router) Build() *echo.Echo {
 		Verificator:         r.Verificator,
 		VerificationDeleter: r.VerificationDeleter,
 	}
+	passwordResetHandler := handlers.PasswordResetHandler{
+		AccountGetter:        r.AccountGetter,
+		AccountUpdater:       r.AccountUpdater,
+		PasswordResetSender:  r.PasswordResetSender,
+		PasswordResetGetter:  r.PasswordResetGetter,
+		PasswordResetCreator: r.PasswordResetCreator,
+		PasswordResetDeleter: r.PasswordResetDeleter,
+	}
 	urlHandler := handlers.UrlHandler{
 		OriginGetter: r.OriginGetter,
 		UrlGetter:    r.UrlGetter,
@@ -107,15 +120,20 @@ func (r Router) Build() *echo.Echo {
 	account.PUT("/password", accountHandler.UpdatePassword)
 	account.DELETE("", accountHandler.Delete)
 
-	verification := api.Group("/verification")
-	verification.GET("/:username/:id", verificationHandler.Verify)
-	verification.POST("/:username", verificationHandler.Send) // TODO: Use to resend verification email
-
 	accountViews := account.Group("/views")
 	accountViews.GET("/icons-row", accountHandler.GetIconsRow)
 	accountViews.GET("/username-dialog", accountHandler.GetUsernameDialog)
 	accountViews.GET("/password-dialog", accountHandler.GetPasswordDialog)
 	accountViews.GET("/delete-dialog", accountHandler.GetDeleteDialog)
+
+	verification := api.Group("/verification")
+	verification.GET("/:username/:id", verificationHandler.Verify)
+	verification.POST("/send/:username", verificationHandler.Send)
+
+	passwordReset := api.Group("/password-reset")
+	passwordReset.GET("/:username/:id", passwordResetHandler.GetPasswordResetPage)
+	passwordReset.POST("/send", passwordResetHandler.Send)
+	passwordReset.POST("/reset/:username", passwordResetHandler.Reset)
 
 	urls := api.Group("/urls")
 	urls.Use(authMiddleware.IsAuthenticated(func(c echo.Context) error {
@@ -165,6 +183,17 @@ func (r Router) Build() *echo.Echo {
 			},
 		}
 		return c.Render(http.StatusOK, "signup", data)
+	})
+	authWeb.GET("/forgot-password", func(c echo.Context) error {
+		data := pages.ForgotPasswordPageData{
+			UsernameInputData: components.InputData{
+				Type: "text", Name: "username", Placeholder: "Username", Value: "",
+			},
+			ButtonData: components.ButtonData{
+				Type: "submit", Text: "Send mail", IsPrimary: true,
+			},
+		}
+		return c.Render(http.StatusOK, "forgot-password", data)
 	})
 
 	protectedWeb := e.Group("")

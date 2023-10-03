@@ -6,8 +6,16 @@ create table users(
 );
 
 create table verification_requests(
-    id varchar(36) primary key,
-    username varchar(30) not null references users(username) on delete cascade on update cascade
+    id varchar(36) not null,
+    username varchar(30) not null references users(username) on delete cascade on update cascade,
+    primary key(id, username)
+);
+
+create table password_reset_requests(
+    id varchar(36) not null,
+    username varchar(30) not null references users(username) on delete cascade on update cascade,
+    expires_at timestamp not null,
+    primary key(id, username)
 );
 
 create table urls(
