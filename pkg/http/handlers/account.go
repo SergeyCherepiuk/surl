@@ -23,16 +23,16 @@ type AccountHandler struct {
 func (h AccountHandler) GetIconsRow(c echo.Context) error {
 	data := components.IconsRowData{
 		ChangeUsernameIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-edit.svg", Alt: "Change username",
+			Type: "button", Icon: "/assets/images/ic-edit.svg", Alt: "Change username",
 		},
 		ChangePasswordIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-security.svg", Alt: "Change password",
+			Type: "button", Icon: "/assets/images/ic-security.svg", Alt: "Change password",
 		},
 		DeleteAccountIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-delete.svg", Alt: "Delete account",
+			Type: "button", Icon: "/assets/images/ic-delete.svg", Alt: "Delete account",
 		},
 		SignOutIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-exit.svg", Alt: "Sign out",
+			Type: "button", Icon: "/assets/images/ic-exit.svg", Alt: "Sign out",
 		},
 	}
 	return c.Render(http.StatusOK, "components/icons-row", data)
@@ -44,10 +44,10 @@ func (h AccountHandler) GetUsernameDialog(c echo.Context) error {
 			Type: "text", Name: "new-username", Placeholder: "New username", Value: c.Get("username").(string),
 		},
 		ConfirmIconButtonData: components.IconButtonData{
-			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
+			Type: "submit", Icon: "/assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
 		DeclineIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-close.svg", Alt: "Decline",
+			Type: "button", Icon: "/assets/images/ic-close.svg", Alt: "Decline",
 		},
 	}
 	return c.Render(http.StatusOK, "components/username-dialog", data)
@@ -78,10 +78,10 @@ func (h AccountHandler) GetDeleteDialog(c echo.Context) error {
 	data := components.DeleteDialogData{
 		Text: "Are you sure you want to delete the account?",
 		ConfirmIconButtonData: components.IconButtonData{
-			Type: "submit", Icon: "assets/images/ic-confirm.svg", Alt: "Confirm",
+			Type: "submit", Icon: "/assets/images/ic-confirm.svg", Alt: "Confirm",
 		},
 		DeclineIconButtonData: components.IconButtonData{
-			Type: "button", Icon: "assets/images/ic-close.svg", Alt: "Decline",
+			Type: "button", Icon: "/assets/images/ic-close.svg", Alt: "Decline",
 		},
 	}
 	return c.Render(http.StatusOK, "components/delete-dialog", data)

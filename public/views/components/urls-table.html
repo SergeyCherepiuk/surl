@@ -5,7 +5,7 @@
                 <div class="flex flex-row gap-2">
                     Origin
                     {{if eq .SortedBy "origin"}}
-                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5"> <!-- TODO: Improve responsiveness for images -->
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5"> <!-- TODO: Improve responsiveness for images -->
                     {{end}}
                 </div>
             </th>
@@ -13,7 +13,7 @@
                 <div class="flex flex-row gap-2">
                     Link
                     {{if eq .SortedBy "hash"}}
-                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
                     {{end}}
                 </div>
             </th>
@@ -21,7 +21,7 @@
                 <div class="flex flex-row gap-2">
                     Expires in
                     {{if eq .SortedBy "expires_at"}}
-                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
                     {{end}}
                 </div>
             </th>
@@ -29,7 +29,7 @@
                 <div class="flex flex-row gap-2">
                     Last used at
                     {{if eq .SortedBy "last_used_at"}}
-                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
                     {{end}}
                 </div>
             </th>
@@ -37,7 +37,7 @@
                 <div class="flex flex-row gap-2">
                     Created at
                     {{if eq .SortedBy "created_at"}}
-                        <img src="assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
                     {{end}}
                 </div>
             </th>

@@ -27,7 +27,7 @@ type UrlHandler struct {
 func (h UrlHandler) GetOriginDialog(c echo.Context) error {
 	body := make(map[string]any)
 	if err := c.Bind(&body); err != nil {
-		return c.Render(http.StatusOK, "components/error", "Invalid request")
+		return c.Render(http.StatusOK, "components/error", "Invalid request body")
 	}
 
 	username, usernameOk := body["username"].(string)
