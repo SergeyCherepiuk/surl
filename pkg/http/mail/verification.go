@@ -25,7 +25,5 @@ func (vs verificationSender) Send(email, username, id string) error {
 		return err
 	}
 
-	fmt.Println(html.String())
-
 	return Sender.SendHTML(email, "Account verification", html.String())
 }
