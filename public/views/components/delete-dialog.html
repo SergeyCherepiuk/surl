@@ -1,5 +1,5 @@
 <div class="flex flex-col">
-    <span id="delete-error" class="text-red-500"></span>
+    <div id="delete-error"></div>
     <form hx-delete="/api/account" hx-target="#delete-error" class="flex flex-row gap-4 items-center">
         <snap>{{.Text}}</snap>
         <div>

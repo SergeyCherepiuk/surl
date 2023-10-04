@@ -1,6 +1,6 @@
 <div id="url-popup" class="absolute flex w-full h-full p-4 items-center justify-center bg-black bg-opacity-50">
     <form hx-put="/api/urls/{{.Username}}/{{.Hash}}" hx-target="#url-error" class="flex flex-col flex-shrink p-4 gap-4 w-full sm:w-[80%] md:w-[65%] lg:w-[45%] xl:w-[30%] bg-gray-200 rounded-xl shadow-md">
-        <span id="url-error" class="text-red-500"></span>
+        <div id="url-error"></div>
         {{template "input" .OriginInputData}}
         <div class="flex flex-row gap-3 self-end">
             <div>
