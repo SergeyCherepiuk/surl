@@ -5,7 +5,7 @@
                 <div class="flex flex-row gap-2">
                     Origin
                     {{if eq .SortedBy "origin"}}
-                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5"> <!-- TODO: Improve responsiveness for images -->
+                        <img src="/assets/images/ic-arrow-{{if .Reversed}}down{{else}}up{{end}}.svg" class="w-5 h-5">
                     {{end}}
                 </div>
             </th>
@@ -53,7 +53,7 @@
                             {{formatLink .Origin}}
                         </a>
                         <button hx-get="/api/urls/views/origin-dialog" hx-vals='{"origin": "{{.Origin}}", "username": "{{.Username}}", "hash": "{{.Hash}}"}' hx-target="closest body" hx-swap="afterbegin" class="w-6 h-6">
-                            <img src="/assets/images/ic-edit.svg" alt="Edit origin" class="rounded-md bg-gray-200 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
+                            <img src="/assets/images/ic-edit.svg" alt="Edit origin" class="rounded-md bg-gray-200 hover:bg-gray-200">
                         </button>
                     </div>
                 </td>
@@ -63,7 +63,7 @@
                             localhost:3000/{{.Username}}/{{.Hash}}
                         </a>
                         <button onclick="copy('{{.Hash}}')" class="w-6 h-6">
-                            <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-200 hover:bg-gray-200"> <!-- TODO: Improve responsiveness for images -->
+                            <img src="/assets/images/ic-copy.svg" alt="Copy to clipboard" class="rounded-md bg-gray-200 hover:bg-gray-200">
                         </button>
                     </div>
                 </td>
