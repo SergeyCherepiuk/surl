@@ -2,8 +2,8 @@ package components
 
 import "html/template"
 
-func Error() *template.Template {
+func Info() *template.Template {
 	return template.Must(template.ParseFiles(
-		"public/views/components/error.html",
+		"public/views/components/info.html",
 	))
 }

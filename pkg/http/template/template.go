@@ -24,6 +24,7 @@ func init() {
 	Renderer.Templates["verified"] = pages.VerifiedPage()
 
 	Renderer.Templates["components/error"] = components.Error()
+	Renderer.Templates["components/info"] = components.Info()
 	Renderer.Templates["components/unverified-error"] = components.UnverifiedError()
 	Renderer.Templates["components/urls-table"] = components.UrlsTable()
 	Renderer.Templates["components/icons-row"] = components.IconsRow()

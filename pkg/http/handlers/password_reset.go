@@ -110,5 +110,5 @@ func (h PasswordResetHandler) Send(c echo.Context) error {
 		h.PasswordResetSender.Send(context.Background(), user.Email, passwordResetRequest)
 	}()
 
-	return c.NoContent(http.StatusOK)
+	return c.Render(http.StatusOK, "components/info", "Password reset request has been sent")
 }
