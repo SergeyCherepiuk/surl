@@ -67,7 +67,6 @@
                         </button>
                     </div>
                 </td>
-                <!-- TODO: Check the direction of sorting -->
                 <td class="align-top px-4 py-3 min-w-[80px] text-black whitespace-nowrap">
                     <div id="sse-{{.Hash}}" hx-ext="sse" sse-connect="/api/urls/{{.Username}}/{{.Hash}}/listen">
                         <div sse-swap="url_update">

@@ -20,8 +20,8 @@ func NewUrlGetter() *urlGetter {
 	return &urlGetter{
 		getStmt:                  internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username AND hash = :hash`),
 		getAllStmt:               internal.MustPrepare(db, `SELECT * FROM urls WHERE username = :username`),
-		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
-		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
+		getAllSortedStmt:         internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s DESC`),
+		getAllSortedReversedStmt: internal.MustPrepareMap(db, []string{"origin", "hash", "created_at", "last_used_at", "expires_at"}, `SELECT * FROM urls WHERE username = :username ORDER BY %s`),
 	}
 }
 
