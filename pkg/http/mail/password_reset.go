@@ -24,8 +24,11 @@ func (prs passwordResetSender) Send(ctx context.Context, email string, passwordR
 		passwordResetRequest.Username, passwordResetRequest.ID,
 	)
 	data := pages.MailPageData{
-		Username:   passwordResetRequest.Username,
-		Message:    "Please click the button below to provide a new password",
+		Username: passwordResetRequest.Username,
+		Paragraphs: []string{
+			"Please click the button below to provide a new password.",
+			"This password reset link will expire in 48 hours. You always can request a new one.",
+		},
 		Link:       link,
 		ButtonText: "Reset password",
 	}

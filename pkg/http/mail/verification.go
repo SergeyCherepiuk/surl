@@ -23,8 +23,11 @@ func (vs verificationSender) Send(email string, verificationRequest domain.Verif
 		verificationRequest.Username, verificationRequest.ID,
 	)
 	data := pages.MailPageData{
-		Username:   verificationRequest.Username,
-		Message:    "Please click the button below to verify your account",
+		Username: verificationRequest.Username,
+		Paragraphs: []string{
+			"Please click the button below to verify your account.",
+			"This verification link will expire in 48 hours. You always can request a new one.",
+		},
 		Link:       link,
 		ButtonText: "Verify",
 	}

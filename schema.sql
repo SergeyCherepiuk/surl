@@ -8,6 +8,7 @@ create table users(
 create table verification_requests(
     id varchar(36) not null,
     username varchar(30) not null references users(username) on delete cascade on update cascade,
+    expires_at timestamp not null,
     primary key(id, username)
 );
 

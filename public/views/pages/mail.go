@@ -4,7 +4,7 @@ import "html/template"
 
 type MailPageData struct {
 	Username   string
-	Message    string
+	Paragraphs []string
 	Link       string
 	ButtonText string
 }

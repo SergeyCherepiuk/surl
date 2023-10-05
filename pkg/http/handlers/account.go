@@ -95,7 +95,7 @@ func (h AccountHandler) UpdateUsername(c echo.Context) error {
 		return c.Render(http.StatusOK, "components/error", err.Error())
 	}
 
-	// TODO: AccountUpdater.UpdateUsername is called implicitly here
+	// NOTE: AccountUpdater.UpdateUsername is called implicitly here
 	if err := h.SessionUpdater.UpdateUsername(context.Background(), username, newUsername); err != nil {
 		return c.Render(http.StatusOK, "components/error", "Failed to update username in the database")
 	}

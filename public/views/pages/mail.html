@@ -10,7 +10,9 @@
                 <h1 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Hello, {{.Username}}</h1>
             </td></tr>
             <tr><td>
-                <span>{{.Message}}</span>
+                {{range .Paragraphs}}
+                    <p>{{.}}</p>
+                {{end}}
             </td></tr>
             <tr><td>
                 <div style="padding-top: 0.75rem; padding-bottom: 0.75rem;">

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/SergeyCherepiuk/surl/domain"
 	"github.com/google/uuid"
@@ -22,8 +23,12 @@ func (h VerificationHandler) Verify(c echo.Context) error {
 	username := c.Param("username")
 	id := c.Param("id")
 
-	// TODO: Use "verificationRequest" to check if it's still valid (after adding expiration time to it)
-	if _, err := h.VerificationGetter.Get(context.Background(), username, id); err != nil {
+	verificationRequest, err := h.VerificationGetter.Get(context.Background(), username, id)
+	if err != nil {
+		return c.Render(http.StatusOK, "not-found", nil)
+	}
+
+	if verificationRequest.ExpiresAt.Before(time.Now().In(time.UTC)) {
 		return c.Render(http.StatusOK, "not-found", nil)
 	}
 
@@ -48,8 +53,9 @@ func (h VerificationHandler) Send(c echo.Context) error {
 	}
 
 	verificationRequest := domain.VerificationRequest{
-		ID:       uuid.NewString(),
-		Username: username,
+		ID:        uuid.NewString(),
+		Username:  username,
+		ExpiresAt: time.Now().Add(48 * time.Hour),
 	}
 	if err := h.VerificationCreator.Create(context.Background(), verificationRequest); err != nil {
 		return c.String(http.StatusInternalServerError, "Failed to send verification email try to login and request a new one")

@@ -2,11 +2,13 @@ package domain
 
 import (
 	"context"
+	"time"
 )
 
 type VerificationRequest struct {
-	ID       string `json:"id" db:"id"`
-	Username string `json:"username" db:"username"`
+	ID        string    `json:"id" db:"id"`
+	Username  string    `json:"username" db:"username"`
+	ExpiresAt time.Time `json:"expires_at" db:"expires_at"`
 }
 
 type VerificationSender interface {
